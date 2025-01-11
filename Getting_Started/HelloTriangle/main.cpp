@@ -7,8 +7,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 666;
-const unsigned int SCR_HEIGHT = 666;
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
 
 const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
@@ -24,6 +24,11 @@ const char *fragmentShaderSource = "#version 330 core\n"
  "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 "}\0";
 
+struct vec3 {
+    float x;
+    float y;
+    float z;
+};
 
 float rect_vertices[] = {
      0.5f,  0.5f, 0.0f,  // top right
@@ -127,8 +132,18 @@ int main()
         float vertices[] = {
            -0.5f, -0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
-            0.0f,  0.5f, 0.0f
+            0.0f,  0.5f, 0.0f, // triangle 0
+            0.5f, -0.5f, 0.0f,
+            1.0f, -0.5,  0.0f,
+            0.75f, 0.5f, 0.0f // triangle 1
     };
+
+    float myVertices[] = {
+         0.5f, -0.5f, 0.0f,
+         1.0f, -0.5,  0.0f,
+         0.5f, 0.5f, 0.0f
+    };
+
 
         /*
     Setting up data flow : 
@@ -138,19 +153,19 @@ int main()
     2) Stream (copy) the data from program to the bound buffer.
     */
 
-    unsigned int VBO, VAO, EBO;
+    unsigned int VBO, VAO ; // EBO;
 
      glGenVertexArrays(1, &VAO);
-     glGenBuffers(1, &EBO);
+   //glGenBuffers(1, &EBO);
      glGenBuffers(1 , &VBO);
+
      glBindVertexArray(VAO);
      glBindBuffer(GL_ARRAY_BUFFER, VBO);
+     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices),vertices, GL_STATIC_DRAW);
 
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices),vertices, GL_STATIC_DRAW);
-    
-    glBufferData(GL_ARRAY_BUFFER, sizeof(rect_vertices), rect_vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(rect_vertices), rect_vertices, GL_STATIC_DRAW);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 
 
@@ -174,8 +189,8 @@ int main()
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        // glDrawArrays(GL_TRIANGLES,0,3);
-        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES,0,6);
+       // glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
