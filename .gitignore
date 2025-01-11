@@ -1,0 +1,7 @@
+.DS_Store
+
+dependencies/*
+**/*.dSYM
+**/*.exe
+**/glad.c
+**/*.vscode
