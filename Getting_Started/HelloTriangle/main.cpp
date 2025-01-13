@@ -17,11 +17,18 @@ const char *vertexShaderSource = "#version 330 core\n"
     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
     "}\0"; 
 
-const char *fragmentShaderSource = "#version 330 core\n"
+const char *orangeShaderFramgmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
  "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"}\0";
+
+const char *yelloworangeFragmentShaderSource = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+ "   FragColor = vec4(0.7f, 0.8f, 0.2f, 1.0f);\n"
 "}\0";
 
 struct vec3 {
@@ -92,15 +99,25 @@ int main()
         std::cout << "Vertex Shader not compiled\n" << infoLog << std::endl;
     }
 
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader,1, &fragmentShaderSource,NULL);
-    glCompileShader(fragmentShader);
+    unsigned int orangeFragmentShader,yellowFragmentShader;
+    orangeFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(orangeFragmentShader,1, &orangeShaderFramgmentShaderSource,NULL);
+    glCompileShader(orangeFragmentShader);
 
-    glGetShaderiv(fragmentShader,GL_COMPILE_STATUS, &success);
+    glGetShaderiv(orangeFragmentShader,GL_COMPILE_STATUS, &success);
     if(!success) {
-        glGetShaderInfoLog(fragmentShader,512,NULL,infoLog);
-        std::cout << "Fragment Shader not compiled\n" << infoLog << std::endl;
+        glGetShaderInfoLog(orangeFragmentShader,512,NULL,infoLog);
+        std::cout << "Orange Fragment Shader not compiled\n" << infoLog << std::endl;
+    }
+
+    yellowFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(yellowFragmentShader,1,&yelloworangeFragmentShaderSource,NULL);
+    glCompileShader(yellowFragmentShader);
+
+     glGetShaderiv(yellowFragmentShader,GL_COMPILE_STATUS, &success);
+    if(!success) {
+        glGetShaderInfoLog(yellowFragmentShader,512,NULL,infoLog);
+        std::cout << "Yellow Fragment Shader not compiled\n" << infoLog << std::endl;
     }
 
     /*
@@ -109,24 +126,38 @@ int main()
     This program is what we use in the main render loop.
     */ 
 
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram,vertexShader);
-    glAttachShader(shaderProgram,fragmentShader);
+    unsigned int orangeShaderProgram, yellowShaderProgram;
+    orangeShaderProgram = glCreateProgram();
+    glAttachShader(orangeShaderProgram,vertexShader);
+    glAttachShader(orangeShaderProgram,orangeFragmentShader);
 
     /*
     Just south of two hours of debugging I gave up and compared the source code to the tutorials.
     Turns out I erased the linking command when I was trying to clean up the code to make it easier to debug and compare.
     Live and learn!
     */
-    glLinkProgram(shaderProgram);
+    glLinkProgram(orangeShaderProgram);
 
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    glGetProgramiv(orangeShaderProgram, GL_LINK_STATUS, &success);
 
-    if(!success) { glGetProgramInfoLog(shaderProgram,512,NULL,infoLog); }
+    if(!success) { glGetProgramInfoLog(orangeShaderProgram,512,NULL,infoLog); }
+
+    
+    glDeleteShader(orangeFragmentShader);
+
+    yellowShaderProgram = glCreateProgram();
+    glAttachShader(yellowShaderProgram,vertexShader);
+    glAttachShader(yellowShaderProgram,yellowFragmentShader);
+
+    glLinkProgram(yellowShaderProgram);
+
+    glGetProgramiv(yellowShaderProgram, GL_LINK_STATUS, &success);
+
+    if(!success) { glGetProgramInfoLog(yellowShaderProgram,512,NULL,infoLog);}
+
 
     glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    glDeleteShader(yellowFragmentShader);
 
 
     float vert[] = {
@@ -190,10 +221,11 @@ int main()
         glClearColor(0.4f, 0.3f, 0.3f, 1.0f); // a lovely red wine puke
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
+        glUseProgram(orangeShaderProgram);
         glBindVertexArray(VAO[0]);
         glDrawArrays(GL_TRIANGLES,0,3);
        // glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);
+       glUseProgram(yellowShaderProgram);
         glBindVertexArray(VAO[1]);
         glDrawArrays(GL_TRIANGLES,0,3);
 
@@ -208,7 +240,7 @@ int main()
     glDeleteVertexArrays(1, &VAO[1]);
     glDeleteBuffers(1, &VBO[0]);
     glDeleteBuffers(1, &VBO[1]);
-    glDeleteProgram(shaderProgram);
+    glDeleteProgram(orangeShaderProgram);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
