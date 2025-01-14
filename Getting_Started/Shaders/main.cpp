@@ -96,7 +96,8 @@ int main()
 
     glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
-
+    float horizontalOffset = 0.4;
+    
     while (!glfwWindowShouldClose(window))
     {
        
@@ -112,6 +113,7 @@ int main()
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES,0,3);
        // glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);
+       ourShader.setFloat("offset",horizontalOffset);
       
 
     
