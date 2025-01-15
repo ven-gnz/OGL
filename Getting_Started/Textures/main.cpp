@@ -97,6 +97,19 @@ unsigned int indices[] = {  // note that we start from 0!
      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
+/*
+    The weird bug was due to
+    :  how I misunderstood the vertex streaming with the attributepointer and streamed them faultily to the GPU - this was further supported by
+    one of the vertices assuming the position of 1.0, 1.0 - the first texture coordinate
+
+    In the source code provided, it all made more sense. 
+    We have 8 floats per row. T
+    
+    he enableVertexAttribArray is received in the vertex shader as layout
+    (location = 0). So we have to make sure next element of type aPos in the receiving end is in fact a position.
+    Same with color, and texture coordinate. So really, this was just a simple beginner mistake I could have maybe avoided had I more experience programming
+    with languages where memory operations are not handled for the programmer.
+*/
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
