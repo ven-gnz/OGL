@@ -10,6 +10,7 @@ void processInput(GLFWwindow *window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+float mix = 0.2;
 
 int main()
 {
@@ -53,7 +54,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
 
     int width, heigth, nrChannels;
@@ -89,10 +90,10 @@ int main()
 
 float vertices[] = {
     // positions          // colors           // texture coords
-     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.6f, 0.6f,   // top right
-     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.6f, 0.58,   // bottom right
-    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.58f, 0.58f,   // bottom left
-    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.58f, 0.6f    // top left 
+     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0,   // bottom right
+    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 };
 
 unsigned int indices[] = {  // note that we start from 0!
@@ -139,7 +140,8 @@ unsigned int indices[] = {  // note that we start from 0!
     glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE, 8 *sizeof(float), (void*)(6*sizeof(float)));
     glEnableVertexAttribArray(2);
 
-  
+    
+    
 
     
     
@@ -148,7 +150,7 @@ unsigned int indices[] = {  // note that we start from 0!
        
         processInput(window);
 
-   
+        ourShader.setFloat("mixValue",mix);
         glClearColor(0.4f, 0.3f, 0.3f, 1.0f); // a lovely red wine puke
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -190,7 +192,16 @@ void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if(glfwGetKey(window,GLFW_KEY_UP) == GLFW_PRESS) {
+        mix = 0.7;
+    }
+    if(glfwGetKey(window,GLFW_KEY_DOWN) == GLFW_PRESS) {{
+        mix = 0.2;
+    }
+
+    }
 }
+
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
