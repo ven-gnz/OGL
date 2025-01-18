@@ -102,7 +102,8 @@ std::cout << vec.x << vec.y << vec.z << std::endl;
         ourShader.setInt("texture2",1);
 
 
-
+        int cubes = 111;
+        const float angleStride = glm::two_pi<float>() / cubes;
 
     
     while (!glfwWindowShouldClose(window))
@@ -136,14 +137,14 @@ std::cout << vec.x << vec.y << vec.z << std::endl;
        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
 
 
+    for(int i = 0; i < cubes; i++){
 
-
-
+        float angle = glfwGetTime() + angleStride*i;
 
         trans = glm::mat4(1.0f);
     
-        trans = glm::translate(trans, glm::vec3(0.25*cos(glfwGetTime()),0.25*sin(glfwGetTime()),0.0));
-        trans = glm::scale(trans, glm::vec3(0.4,0.4,0.4));
+        trans = glm::translate(trans, glm::vec3(0.5*cos(angle),0.5*sin(angle),0.0));
+        trans = glm::scale(trans, glm::vec3(0.3,0.3,0.3));
         
         ourShader.use();
         transformLoc = glGetUniformLocation(ourShader.ID, "transform");
@@ -152,26 +153,9 @@ std::cout << vec.x << vec.y << vec.z << std::endl;
         glDrawElements(GL_TRIANGLES,6 , GL_UNSIGNED_INT, 0);
 
 
-
-
-
-        trans = glm::mat4(1.0f);
-    
-        trans = glm::translate(trans, glm::vec3(-0.5,0.5,0.0));
-        trans = glm::scale(trans, glm::vec3(sin(glfwGetTime()),sin(glfwGetTime()),0.4));
-        
-        ourShader.use();
-        transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES,6 , GL_UNSIGNED_INT, 0);
-
-
-
+    }
         
 
-
-        
 
         // clear the transform
 
