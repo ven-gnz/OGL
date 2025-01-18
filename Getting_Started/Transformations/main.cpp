@@ -118,8 +118,20 @@ std::cout << vec.x << vec.y << vec.z << std::endl;
         face.bind();
 
         glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        //trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+
+        /*
+        Doing the matrix operations in reverse order changes the logic of function composition. Previously we translated the vertices, and applied rotation to the translated vertices.
+        Therefore the cube spun in the bottom corner. The outer function was the translation and inner function was the rotation. Or as a computer scientist, we should think of this
+        as a stack. First we apply the translation, then the rotation. So the translation is rotated.
+
+        By flipping, we instantiate the stack or mapping in reverse order. Now we rotate the translation. This is apparent from looking at the top left corner. It stays in place,
+        and our cube spins around this center point of 0.
+
+        Further proof can propably be found from linear algebra. This is "extensive maths minor" version of what's happening.
+        */
         trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
 
         ourShader.use();
 
