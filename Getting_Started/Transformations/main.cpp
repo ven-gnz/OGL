@@ -101,6 +101,9 @@ std::cout << vec.x << vec.y << vec.z << std::endl;
         ourShader.setInt("texture1",0);
         ourShader.setInt("texture2",1);
 
+
+
+
     
     while (!glfwWindowShouldClose(window))
     {
@@ -118,7 +121,6 @@ std::cout << vec.x << vec.y << vec.z << std::endl;
         face.bind();
 
         glm::mat4 trans = glm::mat4(1.0f);
-        //trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
 
         /*
         Doing the matrix operations in reverse order changes the logic of function composition. Previously we translated the vertices, and applied rotation to the translated vertices.
@@ -130,19 +132,50 @@ std::cout << vec.x << vec.y << vec.z << std::endl;
 
         Further proof can propably be found from linear algebra. This is "extensive maths minor" version of what's happening.
         */
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
 
+       unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+
+
+
+
+
+
+        trans = glm::mat4(1.0f);
+    
+        trans = glm::translate(trans, glm::vec3(0.25*cos(glfwGetTime()),0.25*sin(glfwGetTime()),0.0));
+        trans = glm::scale(trans, glm::vec3(0.4,0.4,0.4));
+        
         ourShader.use();
-
-        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+        transformLoc = glGetUniformLocation(ourShader.ID, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
-
-        // glBindVertexArray(VAO);
-        //glDrawArrays(GL_TRIANGLES,0,3);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES,6 , GL_UNSIGNED_INT, 0);
+
+
+
+
+
+        trans = glm::mat4(1.0f);
+    
+        trans = glm::translate(trans, glm::vec3(-0.5,0.5,0.0));
+        trans = glm::scale(trans, glm::vec3(sin(glfwGetTime()),sin(glfwGetTime()),0.4));
+        
+        ourShader.use();
+        transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES,6 , GL_UNSIGNED_INT, 0);
+
+
+
+        
+
+
+        
+
+        // clear the transform
+
+   
 
     
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
