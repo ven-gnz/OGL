@@ -147,13 +147,33 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         face.bind();
 
-           // model : from global to world
+           
         
         
         glm::mat4 view = glm::mat4(1.0f);
         view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
         ourShader.setMat4("view",view);
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
+
+        /* Exercise 1
+
+        The field of view ratio seems to affect how far the perceived objects are. It is the relationship,
+        or the scale between these. By decreasing it, the near plane approaches camera. By increasing it, the near plane
+        escapes the camera. 45 degree angle preserves the uniform triangles which can be imagined as a side of the frustum.
+
+
+        The aspect ratio describes the relationship or scale between width and height. By default, our width was 800 and height
+        600, giving a nice aspect ratio of 1.333... By decreasing it, two things happen:
+        1) the perceived width of our scene increases; the perspective frustum widens
+        2) the perceived height of our scene decreases; the perspective frustum lengthens.
+        
+        By increasing, the opposite.
+
+        
+        */
+
+
+
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 3.0f, 0.1f, 100.0f);
         ourShader.setMat4("projection",projection);
         glBindVertexArray(VAO);
 
