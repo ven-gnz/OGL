@@ -2,15 +2,13 @@
 #include <GLFW/glfw3.h>
 #include "shader.h"
 #include "texture.h"
+#include "display.h"
 #include <iostream>
 #include <stb/stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow *window);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -78,37 +76,10 @@ int main()
 {
     
     
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-    // glfw window creation
-    // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Hello_TEX", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-
+    Display display(SCR_WIDTH,SCR_HEIGHT);
     Shader ourShader("shader.vs","shader.fs");
     Texture container("../../resources/container.jpg");
     Texture face("../../resources/face.png");
-
 
 
     unsigned int VBO, VAO;
@@ -132,10 +103,10 @@ int main()
         ourShader.setInt("texture2",1);
 
     glEnable(GL_DEPTH_TEST);  
-    while (!glfwWindowShouldClose(window))
+    while (!display.shouldClose())
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        processInput(window);
+        display.processInput();
 
         ourShader.setFloat("mixValue",mix);
         glClearColor(0.4f, 0.3f, sin(glfwGetTime()), 1.0f); // a lovely red wine puke
@@ -180,8 +151,6 @@ int main()
         By increasing, the opposites occur.
         */
 
-
-
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 3.0f, 0.1f, 100.0f);
         ourShader.setMat4("projection",projection);
         glBindVertexArray(VAO);
@@ -196,47 +165,19 @@ int main()
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-        
-
     
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        display.swapBuffers();
+        display.pollEvents();
     }
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
  
 
-    // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
-{
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if(glfwGetKey(window,GLFW_KEY_UP) == GLFW_PRESS) {
-        mix = 0.7;
-    }
-    if(glfwGetKey(window,GLFW_KEY_DOWN) == GLFW_PRESS) {{
-        mix = 0.2;
-    }
-
-    }
-}
 
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
-}
+
