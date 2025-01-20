@@ -147,11 +147,22 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         face.bind();
 
-           
-        
-        
+        /*
+        Exercise 2
+
+        As it name might suggest, the view matrix's coordinate vector describes the point where the projection takes
+        place from. It is our point of view to the world, from where applying the perspective takes place.
+
+        In this scene, changing the x or y greatly will quickly lead to seeing nothing as the world space is not entirely
+        filled with cubes. Some sort of dynamic filling of the world space would be cool to learn after/towards the end
+        of the course. And maybe loading bigger models or renders f.ex a procedurally generated amalgamation of cubical
+        mess.
+        */
         glm::mat4 view = glm::mat4(1.0f);
         view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
+        // view = glm::translate(view, glm::vec3(0.0f,0.0f,7.0f));
+        // view = glm::translate(view, glm::vec3(0.0f,10.0f,7.0f));
+        // view = glm::translate(view, glm::vec3(2.0f,2.0f,2.0f));
         ourShader.setMat4("view",view);
 
         /* Exercise 1
@@ -166,9 +177,7 @@ int main()
         1) the perceived width of our scene increases; the perspective frustum widens
         2) the perceived height of our scene decreases; the perspective frustum lengthens.
         
-        By increasing, the opposite.
-
-        
+        By increasing, the opposites occur.
         */
 
 
@@ -178,12 +187,11 @@ int main()
         glBindVertexArray(VAO);
 
         for(unsigned int i = 0; i < std::size(cubePositions); i++){
-
             
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i; 
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            float angle = i % 3 == 0 ? 90.0f*glfwGetTime() : 0.0f;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(angle, angle, 0.5f));
             ourShader.setMat4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);

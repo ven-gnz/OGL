@@ -88,6 +88,10 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     glUniform1f(glGetUniformLocation(ID,name.c_str()),value);
   }
 
+  /*
+  Might need more glm functions
+  */
+
   void Shader::setMat4(const std::string& name, glm::mat4 mat)const{
     int matLoc = glGetUniformLocation(ID,name.c_str());
     glUniformMatrix4fv(matLoc, 1, GL_FALSE, glm::value_ptr(mat));
