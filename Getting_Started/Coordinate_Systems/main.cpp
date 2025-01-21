@@ -75,12 +75,10 @@ float vertices[] = {
 int main()
 {
     
-    
     Display display(SCR_WIDTH,SCR_HEIGHT);
     Shader ourShader("shader.vs","shader.fs");
     Texture container("../../resources/container.jpg");
     Texture face("../../resources/face.png");
-
 
     unsigned int VBO, VAO;
 
@@ -174,7 +172,7 @@ int main()
     glDeleteBuffers(1, &VBO);
  
 
-    glfwTerminate();
+    
     return 0;
 }
 
