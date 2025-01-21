@@ -11,10 +11,12 @@
 void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 float mix = 0.2;
+float fov = 45.0f;
 
 
 
@@ -121,6 +123,7 @@ int main()
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
     
     
    
@@ -193,7 +196,7 @@ int main()
         ourShader.setMat4("view",view);
 
 
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 3.0f, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(fov), 3.0f, 0.1f, 100.0f);
         ourShader.setMat4("projection",projection);
         glBindVertexArray(VAO);
 
@@ -271,6 +274,16 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
         direction.z = sin(glm::radians(yaw) * cos(glm::radians(pitch)));
         cameraFront = glm::normalize(direction);
     
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
+    fov -= (float)yoffset;
+    if (fov < 1.0f){
+        fov = 1.0f;
+    }
+    if(fov > 45.0f){
+        fov = 45.0f;
+    }
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
