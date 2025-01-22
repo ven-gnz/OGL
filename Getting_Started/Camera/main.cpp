@@ -2,11 +2,13 @@
 #include <GLFW/glfw3.h>
 #include "shader.h"
 #include "texture.h"
+#include "camera.h"
 #include <iostream>
 #include <stb/stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
 
 void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -17,8 +19,6 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 float mix = 0.2;
 float fov = 45.0f;
-
-
 
 glm::vec3 cubePositions[] = {
     glm::vec3( 0.0f,  0.0f,  0.0f), 
@@ -80,6 +80,7 @@ float vertices[] = {
     glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f,0.0f,-1.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f,1.0f,0.0f);
+    
 
     float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
@@ -89,6 +90,8 @@ float vertices[] = {
     bool firstMouse = true;
 
     float lastX = 400, lastY = 300;
+
+    Camera cameroni(cameraPos, cameraUp);
 
 int main()
 {
@@ -118,9 +121,6 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-
-
-
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
@@ -130,6 +130,7 @@ int main()
     Shader ourShader("shader.vs","shader.fs");
     Texture container("../../resources/container.jpg");
     Texture face("../../resources/face.png");
+
 
     unsigned int VBO, VAO;
 
@@ -151,17 +152,30 @@ int main()
         ourShader.setInt("texture1",0);
         ourShader.setInt("texture2",1);
 
-    glEnable(GL_DEPTH_TEST);  
+    glEnable(GL_DEPTH_TEST);
+    glm::mat4 view = glm::mat4(1.0f);
     while (!glfwWindowShouldClose(window))
     {
+
+        /*
+        How to do this with a custom camera class:
+        First deltaTime
+        call the cameras input functions
+        get the view matrix from camera
+        set the view matrix to the shadeer
+        glfw swap bufferonis
+        EDIT : We are trying to keep the camera in it's class, and for now we will handle input here. Let's see...
+        22.1. 20:39 everything is compiling with no errors and warnings. Nothing is rendered...
+        */
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         processInput(window);
 
         ourShader.setFloat("mixValue",mix);
-        glClearColor(0.4f, 0.3f, sin(glfwGetTime()), 1.0f); // a lovely red wine puke
+        glClearColor(0.4f, 0.3f, sin(glfwGetTime()), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glActiveTexture(GL_TEXTURE0);
@@ -170,33 +184,16 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         face.bind();
 
+        view = cameroni.GetViewMatrix();
 
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        /*
-        glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-        glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-        glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-        glm::vec3 up = glm::vec3(0.0f,1.0f,0.0f);
-        glm::vec3 cameraRight = glm::normalize(glm::cross(up,cameraDirection));
-        glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
-        
-        view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), 
-  		                   glm::vec3(0.0f, 0.0f, 0.0f), 
-  		                   glm::vec3(0.0f, 1.0f, 0.0f));
-
-        const float radius = 10.0f;
-        float camX = sin(glfwGetTime()) * radius;
-        float camZ = cos(glfwGetTime()) * radius;
-
-        view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-
-        */
-       
+        std::cout << "Camera Position: " 
+          << cameroni.Position.x << ", "
+          << cameroni.Position.y << ", "
+          << cameroni.Position.z << std::endl;
+      
         ourShader.setMat4("view",view);
 
-
-        glm::mat4 projection = glm::perspective(glm::radians(fov), 3.0f, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), 3.0f, 0.1f, 100.0f);
         ourShader.setMat4("projection",projection);
         glBindVertexArray(VAO);
 
@@ -225,21 +222,20 @@ int main()
 
 void processInput(GLFWwindow* window)
 {
-    const float cameraSpeed= 1.25f * deltaTime;
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
         glfwSetWindowShouldClose(window, true);
     }
     if(glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS){
-        cameraPos += cameraSpeed * cameraFront;
+        cameroni.ProcessKeyboard(FORWARD, deltaTime);
     }
     if(glfwGetKey(window,GLFW_KEY_S)== GLFW_PRESS){
-        cameraPos -= cameraSpeed * cameraFront;
+        cameroni.ProcessKeyboard(BACKWARD, deltaTime);
     }
     if(glfwGetKey(window, GLFW_KEY_A)== GLFW_PRESS){
-        cameraPos -= glm::normalize(glm::cross(cameraFront,cameraUp))*cameraSpeed;
+        cameroni.ProcessKeyboard(LEFT, deltaTime);
     }
      if(glfwGetKey(window, GLFW_KEY_D)== GLFW_PRESS){
-        cameraPos += glm::normalize(glm::cross(cameraFront,cameraUp))*cameraSpeed;
+        cameroni.ProcessKeyboard(RIGHT, deltaTime);
     }
 }
 
@@ -256,23 +252,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
     lastX = xpos;
     lastY = ypos;
 
-    const float sensitivity = 0.1f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    if(pitch > 89.0f)
-        pitch =  89.0f;
-    if(pitch < -89.0f)
-        pitch = -89.0f;
-
-        glm::vec3 direction;
-        direction.x = cos(glm::radians(yaw)*cos(glm::radians(pitch)));
-        direction.y = sin(glm::radians(pitch));
-        direction.z = sin(glm::radians(yaw) * cos(glm::radians(pitch)));
-        cameraFront = glm::normalize(direction);
+    cameroni.ProcessMouseMovement(xoffset,yoffset,true);
     
 }
 
