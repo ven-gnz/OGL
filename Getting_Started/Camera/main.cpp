@@ -166,6 +166,7 @@ int main()
         glfw swap bufferonis
         EDIT : We are trying to keep the camera in it's class, and for now we will handle input here. Let's see...
         22.1. 20:39 everything is compiling with no errors and warnings. Nothing is rendered...
+        EDIT : Currently a working implementation of camera, with camera.h and camera .cpp
         */
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;

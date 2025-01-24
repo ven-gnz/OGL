@@ -24,10 +24,10 @@ glm::mat4 Camera::GetViewMatrix(){
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime){
   float velocity = MovementSpeed * deltaTime;
   if(direction == FORWARD){
-    Position += Front * velocity;
+    Position +=  Front * velocity;
   }
   if(direction == BACKWARD){
-    Position -= Front * velocity;
+    Position -=  Front * velocity;
   }
   if(direction == LEFT){
     Position -= Right * velocity;
@@ -35,6 +35,8 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime){
   if(direction == RIGHT){
     Position += Right * velocity;
   }
+  // This bit was stolen from the exercise solution.
+  Position.y = 0.0f;
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch){
