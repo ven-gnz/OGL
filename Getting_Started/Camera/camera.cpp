@@ -11,6 +11,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
  {
   Position = position;
   Up = up;
+  WorldUp = glm::vec3(Up.x,Up.y,Up.z);
   Yaw = yaw;
   Pitch = pitch;
   updateCameraVectors();
@@ -18,8 +19,6 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
 }
 
 glm::mat4 Camera::GetViewMatrix(){  
-
-
 /*
 24.1.
 DISCLOSURE : Here was the original implementation. When comparing to source code and trying to
@@ -41,10 +40,31 @@ iteratively be rereading the chapter start, and only after some time refer to so
                         0.0,1.0,0.0, -Position.y,
                         0.0,0.0,1.0, -Position.z,
                         0.0,0.0,0.0,1.0};
-  
   return rotation * translation;
-
   */
+
+ glm::vec3 p = Position;
+ glm::vec3 target = glm::vec3(0.0f,0.0f,0.0f);
+ glm::vec3 d = glm::normalize(p - target);
+ glm::vec3 u = WorldUp;
+ glm::vec3 r = glm::normalize(glm::cross(u,d));
+ glm::vec3 cameraUp = glm::cross(d,r);
+
+ glm::mat4 rotation = {
+  r.x, u.x, d.x, 0.0,
+  r.y, u.y, d.y, 0.0,
+  r.z, u.z, d.z, 0.0,
+  0.0, 0.0, 0.0, 1.0
+ };
+
+ glm::mat4 translation = {
+  1.0, 0.0, 0.0, 0.0,
+  0.0, 1.0, 0.0, 0.0,
+  0.0, 0.0, 1.0, 0.0,
+  -p.x, -p.y, -p.z, 1.0
+ };
+
+ return rotation * translation;
 
 
 }
@@ -84,6 +104,17 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
     updateCameraVectors();
 }
 
+
+/*
+EDIT 27.1.
+
+Due to the feedback in tsemppirinki, I figured out the mistake. The world up was read from up, ie updated from current up value. Maybe implementing 
+this I had some semantics as to why, that now can only be found in the cultural heritage archives of alternative realities.
+Therefore we had two mistakes: the worldup must remain static, and due to the orthonormalization (Gram-Schmidt process) working as intended, the
+angles had to line up. Therefore the camera vector complied.
+
+Good stuff and good catch from tsemppirinki!
+*/
 void Camera::updateCameraVectors()
 {
   glm::vec3 front;
@@ -92,7 +123,7 @@ void Camera::updateCameraVectors()
   front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
   Front = glm::normalize(front);
 
-  Right = glm::normalize(glm::cross(Front,Up));
+  Right = glm::normalize(glm::cross(Front,WorldUp));
   Up = glm::normalize(glm::cross(Right,Front));
 
 }

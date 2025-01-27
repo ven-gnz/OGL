@@ -168,6 +168,7 @@ int main()
         22.1. 20:39 everything is compiling with no errors and warnings. Nothing is rendered...
         EDIT : Currently a working implementation of camera, with camera.h and camera .cpp
         */
+       
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -186,11 +187,6 @@ int main()
         face.bind();
 
         view = cameroni.GetViewMatrix();
-
-        std::cout << "Camera Position: " 
-          << cameroni.Position.x << ", "
-          << cameroni.Position.y << ", "
-          << cameroni.Position.z << std::endl;
       
         ourShader.setMat4("view",view);
 
