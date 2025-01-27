@@ -14,57 +14,13 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
   WorldUp = glm::vec3(Up.x,Up.y,Up.z);
   Yaw = yaw;
   Pitch = pitch;
+  
   updateCameraVectors();
 
 }
 
 glm::mat4 Camera::GetViewMatrix(){  
-/*
-24.1.
-DISCLOSURE : Here was the original implementation. When comparing to source code and trying to
-run the program, the camera is obviously not working as intended.
-
-There's some dissecting work to be done here next time I sit down to study. I will seek to improve my solution
-iteratively be rereading the chapter start, and only after some time refer to source code.
-
-  glm::vec4 R = glm::vec4(Right,0.0);
-  glm::vec4 U = glm::vec4(Up,0.0);
-  glm::vec4 D = glm::vec4(Front, 0.0);
-
-  glm::mat4x4 rotation =  {R.x, U.x, D.x, 0.0,
-                          R.y, U.y, D.y, 0.0,
-                          R.z, U.z, D.z, 0.0,
-                          0.0, 0.0, 0.0, 1.0};
-  
-  glm::mat4x4 translation = {1.0,0.0,0.0, -Position.x,
-                        0.0,1.0,0.0, -Position.y,
-                        0.0,0.0,1.0, -Position.z,
-                        0.0,0.0,0.0,1.0};
-  return rotation * translation;
-  */
-
- glm::vec3 p = Position;
- glm::vec3 target = glm::vec3(0.0f,0.0f,0.0f);
- glm::vec3 d = glm::normalize(p - target);
- glm::vec3 u = WorldUp;
- glm::vec3 r = glm::normalize(glm::cross(u,d));
- glm::vec3 cameraUp = glm::cross(d,r);
-
- glm::mat4 rotation = {
-  r.x, u.x, d.x, 0.0,
-  r.y, u.y, d.y, 0.0,
-  r.z, u.z, d.z, 0.0,
-  0.0, 0.0, 0.0, 1.0
- };
-
- glm::mat4 translation = {
-  1.0, 0.0, 0.0, 0.0,
-  0.0, 1.0, 0.0, 0.0,
-  0.0, 0.0, 1.0, 0.0,
-  -p.x, -p.y, -p.z, 1.0
- };
-
- return rotation * translation;
+return glm::lookAt(Position, Position+Front, Up);
 
 
 }
