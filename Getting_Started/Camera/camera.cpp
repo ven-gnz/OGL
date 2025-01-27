@@ -19,9 +19,33 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
 
 }
 
-glm::mat4 Camera::GetViewMatrix(){  
-return glm::lookAt(Position, Position+Front, Up);
+glm::mat4 Camera::GetViewMatrix(){
+//return glm::lookAt(Position, Position+Front, Up);
+return myLookAt(Position, Position+Front, Up);
+}
 
+glm::mat4 Camera::myLookAt(glm::vec3 Pos, glm::vec3 Target, glm::vec3 WorldUp){
+
+  glm::vec3 d = glm::normalize(Pos-Target);
+  glm::vec3 r = glm::normalize(glm::cross(glm::normalize(WorldUp),d));
+  glm::vec3 u = glm::cross(d,r);
+  
+  glm::vec3 p(-Pos.x,-Pos.y,-Pos.z);
+
+  glm::mat4x4 translation = {
+    r.x, u.x, d.x, 0.0,
+    r.y, u.y, d.y, 0.0,
+    r.z, u.z, d.z, 0.0,
+    0.0, 0.0, 0.0, 1.0,
+  };
+  glm::mat4x4 rotation = {
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    p.x, p.y, p.z, 1.0
+  };
+
+  return translation * rotation;
 
 }
 
