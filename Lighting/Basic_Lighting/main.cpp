@@ -166,7 +166,7 @@ int main()
 
         processInput(window);
   
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         lightingShader.use();
@@ -181,6 +181,7 @@ int main()
 
         lightingShader.setMat4("projection",projection);
         lightingShader.setMat4("view",view);
+        lightingShader.setVec3("viewPos",cameroni.Position);
         
         model = glm::mat4(1.0f);
         lightingShader.setMat4("model",model);
@@ -193,8 +194,13 @@ int main()
         lightCubeShader.setMat4("projection",projection);
         lightingShader.setMat4("view",view);
         model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);    
+        double r = 2.5;
+        double xt = r*cos(glfwGetTime()*0.5);
+        double zt = r*sin(glfwGetTime()*0.5);
+        lightPos = glm::vec3(xt, lightPos.y, zt);
+        model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
+
         lightCubeShader.setMat4("model", model);
 
         glBindVertexArray(lightCubeVAO);
