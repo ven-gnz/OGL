@@ -117,7 +117,7 @@ int main()
     glfwSetScrollCallback(window, scroll_callback);
     
     
-    Shader lightingShader("shaders/shader.vs","shaders/shader.fs");
+    Shader lightingShader("shaders/viewphong.vs","shaders/viewphong.fs");
     Shader lightCubeShader("shaders/lightsource.vs","shaders/lightsource.fs");
 
 
