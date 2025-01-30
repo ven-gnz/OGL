@@ -117,8 +117,19 @@ int main()
     glfwSetScrollCallback(window, scroll_callback);
     
     
-    Shader lightingShader("shaders/viewphong.vs","shaders/viewphong.fs");
+    Shader lightingShader("shaders/gouraud.vs","shaders/gouraud.fs");
     Shader lightCubeShader("shaders/lightsource.vs","shaders/lightsource.fs");
+
+    /*
+    Implementing Phong shading was kind of straightforward, it only required thorough understanding of the material and finding all the necessary transforms.
+
+    Gouraud was trickier : getting the shaders to compile was a bit laborous since a lot of the code had to be dumped in order to compile despite all the information passing between shaders.
+    Lots of intermittent variables, lots ot renaming and also lots of small changes between phong and gouraud regarding position calculation and light color and position.
+    Quite fun actually!
+
+    Now to answer the question Why it looks off. The interpolation between fragments is janky, and leads to artefacty image. The hypotenuse dividing the rect to two triangles is visible. The
+    interpolation of light works on a per vertex as opposed to per fragment basis. The change of light and therefore color is a result of trying to lerp the high value to the low.
+     */
 
 
     unsigned int VBO,cubeVAO;
