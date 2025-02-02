@@ -3,6 +3,7 @@
 #include "shader.h"
 #include "texture.h"
 #include "camera.h"
+#include "Light.cpp"
 #include <iostream>
 #include <stb/stb_image.h>
 #include <glm/glm.hpp>
@@ -14,6 +15,7 @@ void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+Light updateLight(Light old);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -147,6 +149,14 @@ int main()
 
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    Light initialLight = {
+        glm::vec3 (0),
+        glm::vec3 (0),
+        glm::vec3 (0),
+        glm::vec3 (0),
+        glm::vec3 (0)
+    };
     
     while (!glfwWindowShouldClose(window))
     {
@@ -161,18 +171,14 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        Light light = updateLight(initialLight);
+
         lightingShader.use();
         lightingShader.setVec3("viewPos", cameroni.Position);
-        glm::vec3 lightColor;
-        lightColor.x = sin(glfwGetTime() * 2.0f);
-        lightColor.y = sin(glfwGetTime() * 0.7f);
-        lightColor.z = sin(glfwGetTime() * 1.3f);
 
-        glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); 
-        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);    
 
-        lightingShader.setVec3("light.ambient", ambientColor);
-        lightingShader.setVec3("light.diffuse",  diffuseColor); 
+        lightingShader.setVec3("light.ambient", light.ambient);
+        lightingShader.setVec3("light.diffuse",  light.diffuse); 
         lightingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("light.position", lightPos);
 
@@ -192,15 +198,20 @@ int main()
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES,0,36);
         
-        // Remember to share view and projection matrices!
+        // Remember to share view and projection matrices
 
         lightCubeShader.use();
+
         lightCubeShader.setMat4("projection",projection);
         lightCubeShader.setMat4("view",view);
         model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
         lightCubeShader.setMat4("model", model);
+
+       lightCubeShader.setVec3("light.ambient", light.ambient);
+       lightCubeShader.setVec3("light.diffuse",  light.diffuse); 
+        lightCubeShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
         glBindVertexArray(lightCubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -218,6 +229,29 @@ int main()
     glfwTerminate();
     return 0;
 }
+
+Light updateLight(Light old){
+
+    old.color.x = sin(glfwGetTime() * 2.0f);
+    old.color.y = sin(glfwGetTime() * 0.7f);
+    old.color.z = sin(glfwGetTime() * 1.3f);
+
+    glm::vec3 diffuseColor = old.color * glm::vec3(0.5f); 
+    glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+    Light updated {
+        old.position,
+        old.color,
+        old.ambient = ambientColor,
+        old.diffuse = diffuseColor,
+        old.specular = old.specular
+    };
+    return updated;
+
+}
+
+
+
 
 void processInput(GLFWwindow* window)
 {
