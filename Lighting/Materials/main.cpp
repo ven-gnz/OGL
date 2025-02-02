@@ -4,6 +4,7 @@
 #include "texture.h"
 #include "camera.h"
 #include "Light.cpp"
+#include "Material.cpp"
 #include <iostream>
 #include <stb/stb_image.h>
 #include <glm/glm.hpp>
@@ -86,6 +87,22 @@ float vertices[] = {
 
     Camera cameroni(cameraPos, cameraUp);
 
+    Material ruby = {
+        glm::vec3(0.1745, 0.01175, 0.01175),
+        glm::vec3(0.61424, 0.04136, 0.04136),
+        glm::vec3(0.727811, 0.626959, 0.626959),
+        0.6 * 128
+    };
+
+
+    Light initialLight = {
+        lightPos,
+        glm::vec3 (1.0),
+        glm::vec3 (1.0),
+        glm::vec3 (1.0),
+        glm::vec3 (1.0)
+    };
+
 int main()
 {
     
@@ -149,14 +166,6 @@ int main()
 
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-
-    Light initialLight = {
-        glm::vec3 (0),
-        glm::vec3 (0),
-        glm::vec3 (0),
-        glm::vec3 (0),
-        glm::vec3 (0)
-    };
     
     while (!glfwWindowShouldClose(window))
     {
@@ -171,7 +180,8 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        Light light = updateLight(initialLight);
+       // Light light = updateLight(initialLight);
+       Light light = initialLight;
 
         lightingShader.use();
         lightingShader.setVec3("viewPos", cameroni.Position);
@@ -183,10 +193,10 @@ int main()
         lightingShader.setVec3("light.position", lightPos);
 
 
-        lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-        lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-        lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-        lightingShader.setFloat("material.shininess", 32.0f);
+        lightingShader.setVec3("material.ambient", ruby.ambient);
+        lightingShader.setVec3("material.diffuse", ruby.diffuse);
+        lightingShader.setVec3("material.specular", ruby.specular);
+        lightingShader.setFloat("material.shininess", ruby.shininess);
         
         glm:: mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), aspect, 0.1f, 100.0f);
         glm::mat4 view = cameroni.GetViewMatrix();
@@ -230,25 +240,25 @@ int main()
     return 0;
 }
 
-Light updateLight(Light old){
+// Light updateLight(Light old){
 
-    old.color.x = sin(glfwGetTime() * 2.0f);
-    old.color.y = sin(glfwGetTime() * 0.7f);
-    old.color.z = sin(glfwGetTime() * 1.3f);
+//     old.color.x = sin(glfwGetTime() * 2.0f);
+//     old.color.y = sin(glfwGetTime() * 0.7f);
+//     old.color.z = sin(glfwGetTime() * 1.3f);
 
-    glm::vec3 diffuseColor = old.color * glm::vec3(0.5f); 
-    glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+//     glm::vec3 diffuseColor = old.color * glm::vec3(0.5f); 
+//     glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
 
-    Light updated {
-        old.position,
-        old.color,
-        old.ambient = ambientColor,
-        old.diffuse = diffuseColor,
-        old.specular = old.specular
-    };
-    return updated;
+//     Light updated {
+//         old.position,
+//         old.color,
+//         old.ambient = ambientColor,
+//         old.diffuse = diffuseColor,
+//         old.specular = old.specular
+//     };
+//     return updated;
 
-}
+// }
 
 
 
