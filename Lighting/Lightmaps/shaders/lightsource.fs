@@ -14,5 +14,5 @@ uniform Light light;
 void main()
 {
     vec3 LightColor = light.ambient + light. diffuse + light.specular;
-    FragColor = vec4(LightColor, 1.0); // White light
+    FragColor = vec4(1.0); // White light
 }

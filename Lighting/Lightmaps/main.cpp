@@ -22,7 +22,7 @@ const unsigned int SCR_HEIGHT = 600;
 const float aspect = (float) SCR_WIDTH / (float) SCR_HEIGHT;
 float fov = 45.0f;
 
-glm::vec3 lightPos(1.2f, 1.0f, -1.0f);
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 
 
@@ -89,10 +89,10 @@ float vertices[] = {
 
     Light initialLight = {
         lightPos,
+        glm::vec3(1.0f),
         glm::vec3 (0.2f, 0.2f, 0.2f),
         glm::vec3 (0.5f, 0.5f, 0.5f),
         glm::vec3 (1.0f, 1.0f ,1.0f),
-        glm::vec3 (cameraPos)
     };
 
 int main()
@@ -104,7 +104,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "COLOR", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Lightmaps", NULL, NULL);
     
      if (window == NULL)
     {
@@ -133,9 +133,6 @@ int main()
     Shader lightCubeShader("shaders/lightsource.vs","shaders/lightsource.fs");
     Texture diffuseMap("../../resources/container2.jpg");
     Texture specMap("../../resources/spec.png");
-
-    lightingShader.setInt("material.diffuse",0);
-    lightingShader.setInt("material.specular",1);
 
     unsigned int VBO,cubeVAO;
     glGenVertexArrays(1, &cubeVAO);
@@ -167,8 +164,9 @@ int main()
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    lightingShader.setInt("material.diffuse",0);
-    lightingShader.setInt("material.specular",1);
+    lightingShader.use();
+    lightingShader.setInt("material.diffuse",diffuseMap.ID);
+    lightingShader.setInt("material.specular",specMap.ID);
     
     while (!glfwWindowShouldClose(window))
     {
@@ -183,7 +181,6 @@ int main()
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-       // Light light = updateLight(initialLight);
        Light light = initialLight;
         
         lightingShader.use();
@@ -193,7 +190,7 @@ int main()
         lightingShader.setVec3("light.diffuse",  light.diffuse); 
         lightingShader.setVec3("light.specular", light.specular);
         lightingShader.setVec3("light.position", lightPos);
-        lightingShader.setFloat("material.shininess",64.0f);
+        lightingShader.setFloat("material.shininess",128.0f);
         
         glm:: mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), aspect, 0.1f, 100.0f);
         glm::mat4 view = cameroni.GetViewMatrix();
@@ -203,12 +200,11 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
         lightingShader.setMat4("model",model);
 
-        glActiveTexture(GL_TEXTURE0);
+        diffuseMap.setActive();
         diffuseMap.bind();
         
-        glActiveTexture(GL_TEXTURE1);
+        specMap.setActive();
         specMap.bind();
-
        
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES,0,36);
@@ -216,17 +212,12 @@ int main()
         // Remember to share view and projection matrices
 
         lightCubeShader.use();
-
         lightCubeShader.setMat4("projection",projection);
         lightCubeShader.setMat4("view",view);
         model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
         lightCubeShader.setMat4("model", model);
-
-       lightCubeShader.setVec3("light.ambient", light.ambient);
-       lightCubeShader.setVec3("light.diffuse",  light.diffuse); 
-       lightCubeShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
         glBindVertexArray(lightCubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
