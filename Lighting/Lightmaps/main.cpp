@@ -132,7 +132,8 @@ int main()
     Shader lightingShader("shaders/shader.vs","shaders/shader.fs");
     Shader lightCubeShader("shaders/lightsource.vs","shaders/lightsource.fs");
     Texture diffuseMap("../../resources/container2.jpg");
-    Texture specMap("../../resources/speccol.png");
+    Texture specMap("../../resources/spec.png");
+    Texture emisMap("../../resources/matrix.jpg");
 
     unsigned int VBO,cubeVAO;
     glGenVertexArrays(1, &cubeVAO);
@@ -167,6 +168,7 @@ int main()
     lightingShader.use();
     lightingShader.setInt("material.diffuse",diffuseMap.ID);
     lightingShader.setInt("material.specular",specMap.ID);
+    lightingShader.setInt("material.emission", emisMap.ID);
 
     Light light = initialLight;
     
@@ -180,7 +182,7 @@ int main()
 
         processInput(window);
   
-        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
         light = updateLight(initialLight);
@@ -202,11 +204,18 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
         lightingShader.setMat4("model",model);
 
-        diffuseMap.setActive();
-        diffuseMap.bind();
-        
         specMap.setActive();
         specMap.bind();
+
+        diffuseMap.setActive();
+        diffuseMap.bind();
+
+        emisMap.setActive();
+        emisMap.bind();
+        
+        
+
+
        
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES,0,36);
