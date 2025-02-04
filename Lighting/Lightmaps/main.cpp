@@ -91,8 +91,8 @@ float vertices[] = {
         lightPos,
         glm::vec3(1.0f),
         glm::vec3 (0.2f, 0.2f, 0.2),
-        glm::vec3 (0.5f, 0.5, 0.5),
-        glm::vec3 (1.0f, 1.0f ,1.0f),
+        glm::vec3 (0.4f, 0.4, 0.4),
+        glm::vec3 (0.8f, 0.8f ,0.8f),
     };
 
 int main()
@@ -190,7 +190,7 @@ int main()
         lightingShader.setVec3("light.diffuse",  light.diffuse); 
         lightingShader.setVec3("light.specular", light.specular);
         lightingShader.setVec3("light.position", lightPos);
-        lightingShader.setFloat("material.shininess",2056.0f);
+        lightingShader.setFloat("material.shininess",64.0f);
         
         glm:: mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), aspect, 0.1f, 100.0f);
         glm::mat4 view = cameroni.GetViewMatrix();
