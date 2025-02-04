@@ -22,7 +22,7 @@ const unsigned int SCR_HEIGHT = 600;
 const float aspect = (float) SCR_WIDTH / (float) SCR_HEIGHT;
 float fov = 45.0f;
 
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos(0.25f, 0.1f, 3.0f);
 
 
 
@@ -132,7 +132,7 @@ int main()
     Shader lightingShader("shaders/shader.vs","shaders/shader.fs");
     Shader lightCubeShader("shaders/lightsource.vs","shaders/lightsource.fs");
     Texture diffuseMap("../../resources/container2.jpg");
-    Texture specMap("../../resources/spec.png");
+    Texture specMap("../../resources/speccol.png");
 
     unsigned int VBO,cubeVAO;
     glGenVertexArrays(1, &cubeVAO);
@@ -167,6 +167,8 @@ int main()
     lightingShader.use();
     lightingShader.setInt("material.diffuse",diffuseMap.ID);
     lightingShader.setInt("material.specular",specMap.ID);
+
+    Light light = initialLight;
     
     while (!glfwWindowShouldClose(window))
     {
@@ -180,8 +182,8 @@ int main()
   
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
-       Light light = initialLight;
+        
+        light = updateLight(initialLight);
         
         lightingShader.use();
         lightingShader.setVec3("viewPos", cameroni.Position);
@@ -189,7 +191,7 @@ int main()
         lightingShader.setVec3("light.ambient", light.ambient);
         lightingShader.setVec3("light.diffuse",  light.diffuse); 
         lightingShader.setVec3("light.specular", light.specular);
-        lightingShader.setVec3("light.position", lightPos);
+        lightingShader.setVec3("light.position", light.position);
         lightingShader.setFloat("material.shininess",64.0f);
         
         glm:: mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), aspect, 0.1f, 100.0f);
@@ -215,7 +217,7 @@ int main()
         lightCubeShader.setMat4("projection",projection);
         lightCubeShader.setMat4("view",view);
         model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
+        model = glm::translate(model, light.position);
         model = glm::scale(model, glm::vec3(0.2f));
         lightCubeShader.setMat4("model", model);
 
@@ -234,6 +236,22 @@ int main()
 
     glfwTerminate();
     return 0;
+}
+
+Light updateLight(Light old){
+
+        old.position.y = old.position.y + 0.8  *glm::cos(glfwGetTime());
+        old.position.x = old.position.x + 0.8  *glm::sin(glfwGetTime());
+
+    Light updated {
+        old.position,
+        old.color,
+        old.ambient,
+        old.diffuse,
+        old.specular
+    };
+    return updated;
+
 }
 
 
