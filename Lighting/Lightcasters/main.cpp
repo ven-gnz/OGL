@@ -205,13 +205,14 @@ int main()
         lightingShader.setVec3("light.position", cameroni.Position);
         lightingShader.setVec3("light.direction", cameroni.Front);
         lightingShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+        lightingShader.setFloat("light.outerCutOff", glm::cos((glm::radians(15.5f))));
         lightingShader.setVec3("viewPos", cameroni.Position);
 
         lightingShader.setVec3("light.ambient", light.ambient);
         lightingShader.setVec3("light.diffuse",  light.diffuse); 
         lightingShader.setVec3("light.specular", light.specular);
        
-       
+
         lightingShader.setFloat("light.constant", 1.0f);
         lightingShader.setFloat("light.linear", 0.09f);
         lightingShader.setFloat("light.quadratic", 0.032f);
