@@ -146,7 +146,7 @@ int main()
     Shader lightCubeShader("shaders/lightsource.vs","shaders/lightsource.fs");
     Texture diffuseMap("../../resources/container2.jpg");
     Texture specMap("../../resources/spec.png");
-    Texture emisMap("../../resources/matrix.jpg");
+   // Texture emisMap("../../resources/matrix.jpg");
 
     unsigned int VBO,cubeVAO;
     glGenVertexArrays(1, &cubeVAO);
@@ -181,7 +181,7 @@ int main()
     lightingShader.use();
     lightingShader.setInt("material.diffuse",diffuseMap.ID);
     lightingShader.setInt("material.specular",specMap.ID);
-    lightingShader.setInt("material.emission", emisMap.ID);
+   // lightingShader.setInt("material.emission", emisMap.ID);
 
     Light light = initialLight;
     
@@ -207,6 +207,10 @@ int main()
         lightingShader.setVec3("light.diffuse",  light.diffuse); 
         lightingShader.setVec3("light.specular", light.specular);
         lightingShader.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
+        lightingShader.setFloat("light.constant", 1.0f);
+        lightingShader.setFloat("light.linear", 0.09f);
+        lightingShader.setFloat("light.quadratic", 0.032f);
+
         lightingShader.setFloat("material.shininess",64.0f);
         
         glm:: mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), aspect, 0.1f, 100.0f);
@@ -239,16 +243,16 @@ int main()
         
         // Remember to share view and projection matrices
 
-        // lightCubeShader.use();
-        // lightCubeShader.setMat4("projection",projection);
-        // lightCubeShader.setMat4("view",view);
-        // model = glm::mat4(1.0f);
-        // model = glm::translate(model, light.position);
-        // model = glm::scale(model, glm::vec3(0.2f));
-        // lightCubeShader.setMat4("model", model);
+        lightCubeShader.use();
+        lightCubeShader.setMat4("projection",projection);
+        lightCubeShader.setMat4("view",view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, light.position);
+        model = glm::scale(model, glm::vec3(0.2f));
+        lightCubeShader.setMat4("model", model);
 
-        // glBindVertexArray(lightCubeVAO);
-        // glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(lightCubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
     
         glfwSwapBuffers(window);
         glfwPollEvents();
