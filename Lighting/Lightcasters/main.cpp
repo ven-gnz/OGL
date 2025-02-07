@@ -22,7 +22,7 @@ const unsigned int SCR_HEIGHT = 600;
 const float aspect = (float) SCR_WIDTH / (float) SCR_HEIGHT;
 float fov = 45.0f;
 
-glm::vec3 lightPos(0.25f, 0.1f, 3.0f);
+glm::vec3 lightPos(0.25f, 1.0f, -2.0f);
 
 
 
@@ -102,9 +102,9 @@ glm::vec3 cubePositions[] = {
 
     Light initialLight = {
         lightPos,
-        glm::vec3(1.0f),
-        glm::vec3 (0.2f, 0.2f, 0.2),
-        glm::vec3 (0.5f, 0.5, 0.5),
+        glm::vec3(1.0),
+        glm::vec3 (0.0f, 0.0f, 0.0f),
+        glm::vec3 (0.2f, 0.2, 0.2),
         glm::vec3 (1.0f, 1.0f ,1.0f),
     };
 
@@ -198,14 +198,14 @@ int main()
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
-        light = initialLight;
+        light = updateLight(initialLight);
         
         lightingShader.use();
 
-        lightingShader.setVec3("light.position", cameroni.Position);
-        lightingShader.setVec3("light.direction", cameroni.Front);
-        lightingShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-        lightingShader.setFloat("light.outerCutOff", glm::cos((glm::radians(15.5f))));
+        lightingShader.setVec3("light.position", light.position);
+        lightingShader.setVec3("light.direction", light.position);
+        lightingShader.setFloat("light.cutOff", glm::cos(glm::radians(25.0f)));
+        lightingShader.setFloat("light.outerCutOff", glm::cos((glm::radians(27.5f))));
         lightingShader.setVec3("viewPos", cameroni.Position);
 
         lightingShader.setVec3("light.ambient", light.ambient);
@@ -214,10 +214,10 @@ int main()
        
 
         lightingShader.setFloat("light.constant", 1.0f);
-        lightingShader.setFloat("light.linear", 0.09f);
-        lightingShader.setFloat("light.quadratic", 0.032f);
+        lightingShader.setFloat("light.linear", 0.14f);
+        lightingShader.setFloat("light.quadratic", 0.07f);
 
-        lightingShader.setFloat("material.shininess",64.0f);
+        lightingShader.setFloat("material.shininess",32.0f);
         
         glm:: mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), aspect, 0.1f, 100.0f);
         glm::mat4 view = cameroni.GetViewMatrix();
@@ -245,18 +245,18 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
         
-        // Remember to share view and projection matrices
+       //  Remember to share view and projection matrices
 
-        // lightCubeShader.use();
-        // lightCubeShader.setMat4("projection",projection);
-        // lightCubeShader.setMat4("view",view);
-        // model = glm::mat4(1.0f);
-        // model = glm::translate(model, light.position);
-        // model = glm::scale(model, glm::vec3(0.2f));
-        // lightCubeShader.setMat4("model", model);
+        lightCubeShader.use();
+        lightCubeShader.setMat4("projection",projection);
+        lightCubeShader.setMat4("view",view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, light.position);
+        model = glm::scale(model, glm::vec3(0.2f));
+        lightCubeShader.setMat4("model", model);
 
-        // glBindVertexArray(lightCubeVAO);
-        // glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(lightCubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
     
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -275,7 +275,7 @@ int main()
 Light updateLight(Light old){
 
         old.position.y = old.position.y + 0.8  *glm::cos(glfwGetTime());
-        old.position.x = old.position.x + 0.8  *glm::sin(glfwGetTime());
+        old.position.z = old.position.z + 0.8  *glm::sin(glfwGetTime());
 
     Light updated {
         old.position,

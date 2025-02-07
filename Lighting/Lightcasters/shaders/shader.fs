@@ -30,16 +30,17 @@ uniform vec3 viewPos;
 uniform Material material;
 uniform Light light;
 
-// Some copy paste error happened. This is the source code version.
+// Some copy paste error happened. This is the source code version (until it wasn't)
 
 void main()
 {
     vec3 lightDir = normalize(light.position - FragPos);
     
     // check if lighting is inside the spotlight cone
-    float theta = dot(lightDir, normalize(-light.direction));
-    float epsilon = light.cutOff - light.outerCutOff;
-    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+  //  float theta = dot(lightDir, normalize(-light.direction));
+  //  float epsilon = light.cutOff - light.outerCutOff;
+    // float intensity = 1.0 - clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0); black spotlight hehe
+    // float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
    
         // ambient
         vec3 ambient = light.ambient * texture(material.diffuse, TexCoords).rgb;
@@ -60,8 +61,11 @@ void main()
         float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
 
         // ambient  *= attenuation; // remove attenuation from ambient, as otherwise at large distances the light would be darker inside than outside the spotlight due the ambient term in the else branch
-        diffuse   *= intensity;
-        specular *= intensity;   
+       // diffuse   *= intensity;
+       // specular *= intensity;
+
+       diffuse *= attenuation;
+       specular *= attenuation;   
             
         vec3 result = ambient + diffuse + specular;
         FragColor = vec4(result, 1.0);
