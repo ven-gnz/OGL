@@ -22,7 +22,7 @@ const unsigned int SCR_HEIGHT = 600;
 const float aspect = (float) SCR_WIDTH / (float) SCR_HEIGHT;
 float fov = 45.0f;
 
-glm::vec3 lightPos(0.25f, 1.0f, -2.0f);
+glm::vec3 lightPos(0.25f, 2.0f, -5.0f);
 
 
 
@@ -202,17 +202,18 @@ int main()
         
         lightingShader.use();
 
+        // moving yellow light
+
         lightingShader.setVec3("light.position", light.position);
         lightingShader.setVec3("light.direction", light.position);
         lightingShader.setFloat("light.cutOff", glm::cos(glm::radians(25.0f)));
         lightingShader.setFloat("light.outerCutOff", glm::cos((glm::radians(27.5f))));
         lightingShader.setVec3("viewPos", cameroni.Position);
+        lightingShader.setFloat("discoloration",glm::sin(0.1 * glfwGetTime()));
 
         lightingShader.setVec3("light.ambient", light.ambient);
         lightingShader.setVec3("light.diffuse",  light.diffuse); 
         lightingShader.setVec3("light.specular", light.specular);
-       
-
         lightingShader.setFloat("light.constant", 1.0f);
         lightingShader.setFloat("light.linear", 0.14f);
         lightingShader.setFloat("light.quadratic", 0.07f);
@@ -240,6 +241,7 @@ int main()
             model = glm::translate(model,cubePositions[i]);
             float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+
             lightingShader.setMat4("model",model);
             
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -274,8 +276,8 @@ int main()
 
 Light updateLight(Light old){
 
-        old.position.y = old.position.y + 0.8  *glm::cos(glfwGetTime());
-        old.position.z = old.position.z + 0.8  *glm::sin(glfwGetTime());
+        old.position.y = old.position.y + 3  * glm::cos(0.5 * glfwGetTime());
+        old.position.z = old.position.z + 3  * glm::sin(0.5 * glfwGetTime());
 
     Light updated {
         old.position,

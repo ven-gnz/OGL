@@ -29,6 +29,7 @@ in vec2 TexCoords;
 uniform vec3 viewPos;
 uniform Material material;
 uniform Light light;
+uniform float discoloration;
 
 // Some copy paste error happened. This is the source code version (until it wasn't)
 
@@ -59,6 +60,13 @@ void main()
         // attenuation
         float distance    = length(light.position - FragPos);
         float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+        vec3 colorWarp = vec3(0, discoloration, 0);
+        if(distance < 4.0){
+            colorWarp += vec3(1,0,0); 
+        }
+
+        diffuse += colorWarp;
+        specular += colorWarp;
 
         // ambient  *= attenuation; // remove attenuation from ambient, as otherwise at large distances the light would be darker inside than outside the spotlight due the ambient term in the else branch
        // diffuse   *= intensity;
