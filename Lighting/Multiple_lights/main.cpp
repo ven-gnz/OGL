@@ -29,11 +29,19 @@ glm::vec3 pointLightPositions[] = {
 	glm::vec3( 0.0f,  0.0f, -3.0f)
 };  
 
+//desert point lights
+// glm::vec3 pointLightColors[] = {
+//     glm::vec3(0.8, 0.0, 0.0), // red
+//     glm::vec3(0.8, 0.6, 0.15), // yellowish
+//     glm::vec3(0.8, 0.0, 0.0), // red
+//     glm::vec3(0.8, 0.6, 0.15) // yellowish
+// };
+
 glm::vec3 pointLightColors[] = {
-    glm::vec3(0.8, 0.0, 0.0), // red
-    glm::vec3(0.8, 0.6, 0.15), // yellowish
-    glm::vec3(0.8, 0.0, 0.0), // red
-    glm::vec3(0.8, 0.6, 0.15) // yellowish
+    glm::vec3(0.3, 0.6, 0.1),
+    glm::vec3(0.3, 0.6, 0.1),
+    glm::vec3(0.3, 0.6, 0.1),
+    glm::vec3(0.3, 0.6, 0.1)
 };
 
 
@@ -197,7 +205,8 @@ int main()
 
         processInput(window);
   
-        glClearColor(0.7f, 0.5f, 0.2f, 1.0f);
+        // glClearColor(0.7f, 0.5f, 0.2f, 1.0f); // desert
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // chem lab
         glClear(GL_COLOR_BUFFER_BIT);
 
         lightingShader.setVec3("viewPos", cameroni.Position);
@@ -205,10 +214,15 @@ int main()
         
         lightingShader.use();
 
-        lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-        lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-        lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-        lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        // lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+        // lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+        // lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        // lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+
+         lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+         lightingShader.setVec3("dirLight.ambient", 0.5f, 0.5f, 0.5f);
+         lightingShader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f);
+         lightingShader.setVec3("dirLight.specular", 1.0f, 1.0f, 1.0f);
 
         for(unsigned int iter = 0; iter < 4; iter++){
         std::string i = std::to_string(iter);
@@ -224,8 +238,8 @@ int main()
         lightingShader.setVec3("spotLight.position", cameroni.Position);
         lightingShader.setVec3("spotLight.direction", cameroni.Front);
         lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-        lightingShader.setVec3("spotLight.diffuse", 0.8f, 0.8f, 1.0f);
-        lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 0.0f);
+        lightingShader.setVec3("spotLight.diffuse", 0.4f, 0.4f, 0.4f);
+        lightingShader.setVec3("spotLight.specular", 0.8f, 1.0f, 0.8f);
         lightingShader.setFloat("spotLight.constant", 1.0f);
         lightingShader.setFloat("spotLight.linear", 0.09f);
         lightingShader.setFloat("spotLight.quadratic", 0.032f);
