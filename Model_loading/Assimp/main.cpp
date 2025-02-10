@@ -22,6 +22,7 @@ const unsigned int SCR_HEIGHT = 600;
 const float aspect = (float) SCR_WIDTH / (float) SCR_HEIGHT;
 float fov = 45.0f;
 
+
 glm::vec3 pointLightPositions[] = {
 	glm::vec3( 0.7f,  0.2f,  2.0f),
 	glm::vec3( 2.3f, -3.3f, -4.0f),
@@ -29,20 +30,21 @@ glm::vec3 pointLightPositions[] = {
 	glm::vec3( 0.0f,  0.0f, -3.0f)
 };  
 
-//desert point lights
-// glm::vec3 pointLightColors[] = {
-//     glm::vec3(0.8, 0.0, 0.0), // red
-//     glm::vec3(0.8, 0.6, 0.15), // yellowish
-//     glm::vec3(0.8, 0.0, 0.0), // red
-//     glm::vec3(0.8, 0.6, 0.15) // yellowish
-// };
-
+// desert point lights
 glm::vec3 pointLightColors[] = {
-    glm::vec3(0.3, 0.6, 0.1),
-    glm::vec3(0.3, 0.6, 0.1),
-    glm::vec3(0.3, 0.6, 0.1),
-    glm::vec3(0.3, 0.6, 0.1)
+    glm::vec3(0.8, 0.0, 0.0), // red
+    glm::vec3(0.8, 0.6, 0.15), // yellowish
+    glm::vec3(0.8, 0.0, 0.0), // red
+    glm::vec3(0.8, 0.6, 0.15) // yellowish
 };
+
+//chemlab points lights
+// glm::vec3 pointLightColors[] = {
+//     glm::vec3(0.3, 0.6, 0.1),
+//     glm::vec3(0.3, 0.6, 0.1),
+//     glm::vec3(0.3, 0.6, 0.1),
+//     glm::vec3(0.3, 0.6, 0.1)
+// };
 
 
 
