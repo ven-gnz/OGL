@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "shader.h"
-#include "texture.h"
+#include "Texture_old.h"
 #include "camera.h"
 #include "Light.cpp"
 #include <iostream>
@@ -158,8 +158,8 @@ int main()
     
     Shader lightingShader("shaders/shader.vs","shaders/shader.fs");
     Shader lightCubeShader("shaders/lightsource.vs","shaders/lightsource.fs");
-    Texture diffuseMap("../../resources/container2.jpg");
-    Texture specMap("../../resources/spec.png");
+    Texture_old diffuseMap("../../resources/container2.jpg");
+    Texture_old specMap("../../resources/spec.png");
    // Texture emisMap("../../resources/matrix.jpg");
 
     unsigned int VBO,cubeVAO;
@@ -207,8 +207,8 @@ int main()
 
         processInput(window);
   
-        // glClearColor(0.7f, 0.5f, 0.2f, 1.0f); // desert
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // chem lab
+         glClearColor(0.7f, 0.5f, 0.2f, 1.0f); // desert
+       // glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // chem lab
         glClear(GL_COLOR_BUFFER_BIT);
 
         lightingShader.setVec3("viewPos", cameroni.Position);
@@ -216,15 +216,15 @@ int main()
         
         lightingShader.use();
 
-        // lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-        // lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-        // lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-        // lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-
         lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-        lightingShader.setVec3("dirLight.ambient", 0.5f, 0.5f, 0.5f);
-        lightingShader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f);
-        lightingShader.setVec3("dirLight.specular", 1.0f, 1.0f, 1.0f);
+        lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f); // desert
+        lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+
+        // lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+        // lightingShader.setVec3("dirLight.ambient", 0.5f, 0.5f, 0.5f); // chemlab
+        // lightingShader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f);
+        // lightingShader.setVec3("dirLight.specular", 1.0f, 1.0f, 1.0f);
 
         for(unsigned int iter = 0; iter < 4; iter++){
             std::string i = std::to_string(iter);

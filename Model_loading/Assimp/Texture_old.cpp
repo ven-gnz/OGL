@@ -1,8 +1,8 @@
-#include "texture.h"
+#include "Texture_old.h"
 #include <glad/glad.h>
 #include <iostream>
 
-Texture::Texture(const char* filePath){
+Texture_old::Texture_old(const char* filePath){
 
     glGenTextures(1, &ID);
     int width, heigth, nrChannels;
@@ -25,6 +25,7 @@ Texture::Texture(const char* filePath){
       glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
       glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
       stbi_image_free(data);
+
     }
     else {
         std::cout << "Failed to load texture"<< ID << std::endl;
@@ -33,7 +34,7 @@ Texture::Texture(const char* filePath){
 
 }
 
-const char* Texture::getFileExtension(const char* filePath) {
+const char* Texture_old::getFileExtension(const char* filePath) {
     const char* dot = strrchr(filePath, '.');
     if (!dot || dot == filePath) {
         return "";
@@ -42,11 +43,11 @@ const char* Texture::getFileExtension(const char* filePath) {
 }
 
 
-void Texture::bind() const{
+void Texture_old::bind() const{
   glBindTexture(GL_TEXTURE_2D, ID);
 }
 
-void Texture::setActive() const{
+void Texture_old::setActive() const{
   glActiveTexture(GL_TEXTURE0 + ID);
 }
 
