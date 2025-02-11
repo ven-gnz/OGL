@@ -1,9 +1,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "shader.h"
-#include "texture.h"
 #include "camera.h"
 #include "Light.cpp"
+#include "model.h"
 #include <iostream>
 #include <stb/stb_image.h>
 #include <glm/glm.hpp>
@@ -91,19 +91,6 @@ float vertices[] = {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
 
-glm::vec3 cubePositions[] = {
-    glm::vec3( 0.0f,  0.0f,  0.0f), 
-    glm::vec3( 2.0f,  5.0f, -15.0f), 
-    glm::vec3(-1.5f, -2.2f, -2.5f),  
-    glm::vec3(-3.8f, -2.0f, -12.3f),  
-    glm::vec3( 2.4f, -0.4f, -3.5f),  
-    glm::vec3(-1.7f,  3.0f, -7.5f),  
-    glm::vec3( 1.3f, -2.0f, -2.5f),  
-    glm::vec3( 1.5f,  2.0f, -2.5f), 
-    glm::vec3( 1.5f,  0.2f, -1.5f), 
-    glm::vec3(-1.3f,  1.0f, -1.5f)  
-};
-
     glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f,0.0f,-1.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f,1.0f,0.0f);
@@ -156,43 +143,23 @@ int main()
     
     Shader lightingShader("shaders/shader.vs","shaders/shader.fs");
     Shader lightCubeShader("shaders/lightsource.vs","shaders/lightsource.fs");
-    Texture diffuseMap("../../resources/container2.jpg");
-    Texture specMap("../../resources/spec.png");
-   // Texture emisMap("../../resources/matrix.jpg");
 
-    unsigned int VBO,cubeVAO;
-    glGenVertexArrays(1, &cubeVAO);
-    glBindVertexArray(cubeVAO);
-    glGenBuffers(1 , &VBO);
+    Model backpack("../../resources/backpack/backpack.obj");
 
 
-     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindVertexArray(cubeVAO);
-
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2,2, GL_FLOAT,GL_FALSE, 8 * sizeof(float), (void*)(6*sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-
-    unsigned int lightCubeVAO;
+    unsigned int VBO, lightCubeVAO;
     glGenVertexArrays(1, &lightCubeVAO);
+    glGenBuffers(1 , &VBO);
     glBindVertexArray(lightCubeVAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     lightingShader.use();
-    lightingShader.setInt("material.diffuse",diffuseMap.ID);
-    lightingShader.setInt("material.specular",specMap.ID);
+
   
     
     while (!glfwWindowShouldClose(window))
@@ -257,27 +224,10 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
         lightingShader.setMat4("model",model);
 
-        specMap.setActive();
-        specMap.bind();
-
-        diffuseMap.setActive();
-        diffuseMap.bind();
-
-        glBindVertexArray(cubeVAO);
-        for(unsigned int i = 0; i < 10; i++){
-
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model,cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-
-            lightingShader.setMat4("model",model);
-            
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+        backpack.Draw(lightingShader);
+     
         
        //  Remember to share view and projection matrices
-
         lightCubeShader.use();
         lightCubeShader.setMat4("projection",projection);
         lightCubeShader.setMat4("view",view);
@@ -299,7 +249,7 @@ int main()
     }
 
     
-    glDeleteVertexArrays(1, &cubeVAO);
+   
     glDeleteVertexArrays(1, &lightCubeVAO);
     glDeleteBuffers(1, &VBO);
 
