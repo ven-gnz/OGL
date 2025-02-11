@@ -1,14 +1,14 @@
-#ifndef TEXTURE_OLD_H
-#define TEXTURE_OLD_H
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
 #include <stb/stb_image.h>
 
-class Texture_old
+class Texture
 {
   public:
   unsigned int ID;
 
-  Texture_old(const char* filePath);
+  Texture(const char* filePath);
 
   void bind() const;
   void setActive() const;
