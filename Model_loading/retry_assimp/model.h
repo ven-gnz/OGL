@@ -25,17 +25,20 @@ class Model
 {
 public:
     // model data 
+
+
+    // constructor, expects a filepath to a 3D model.
+    Model(string const &path, bool gamma = false);
+
+    void Draw(Shader &shader);
+    
+private:
+
     vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh>    meshes;
     string directory;
     bool gammaCorrection;
 
-    // constructor, expects a filepath to a 3D model.
-    Model(string const &path, bool gamma = false) : gammaCorrection(gamma);
-
-    void Draw(Shader &shader);
-    
-private:    
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
     void loadModel(string const &path);
 
