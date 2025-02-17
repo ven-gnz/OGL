@@ -16,28 +16,15 @@ void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+
+glm::mat4 projection_matrix(float near, float far);
 unsigned int loadTexture(const char *path);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 const float aspect = (float) SCR_WIDTH / (float) SCR_HEIGHT;
 float fov = 45.0f;
-
-
-//desert point lights
-// glm::vec3 pointLightColors[] = {
-//     glm::vec3(0.8, 0.0, 0.0), // red
-//     glm::vec3(0.8, 0.6, 0.15), // yellowish
-//     glm::vec3(0.8, 0.0, 0.0), // red
-//     glm::vec3(0.8, 0.6, 0.15) // yellowish
-// };
-
-glm::vec3 pointLightColors[] = {
-    glm::vec3(0.3, 0.6, 0.1),
-    glm::vec3(0.3, 0.6, 0.1),
-    glm::vec3(0.3, 0.6, 0.1),
-    glm::vec3(0.3, 0.6, 0.1)
-};
 
 
 
@@ -97,7 +84,7 @@ glm::vec3 pointLightColors[] = {
          5.0f, -0.5f, -5.0f,  2.0f, 2.0f								
     };
 
-    glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,-3.0f);
+    glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f,0.0f,-1.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f,1.0f,0.0f);
     
@@ -109,7 +96,7 @@ glm::vec3 pointLightColors[] = {
     float roll;
     bool firstMouse = true;
 
-    float lastX = 400, lastY = 300;
+    float lastX = SCR_WIDTH / 2, lastY = SCR_HEIGHT / 2;
 
     Camera cameroni(cameraPos, cameraUp);
 
@@ -126,7 +113,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Model_loading", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Depth testing", NULL, NULL);
     
      if (window == NULL)
     {
@@ -207,12 +194,13 @@ int main()
 
         
         blancoShader.use();
-        glm::mat4 model = glm::mat4(1.0f);
+        
         glm::mat4 view = cameroni.GetViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), aspect, 0.1f, 100.0f);
         blancoShader.setMat4("view", view);
         blancoShader.setMat4("projection", projection);
         // cubes
+        glm::mat4 model = glm::mat4(1.0f);
         glBindVertexArray(cubeVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, marble);
@@ -257,10 +245,12 @@ unsigned int loadTexture(char const* path){
     int width, height, nrComponents;
     unsigned char *data = stbi_load(path, &width,&height, &nrComponents, 0);
     if(data){
-        GLenum format;
+
+
+        GLenum format = GL_RGBA; 
         if (nrComponents == 1) format = GL_RED;
         if (nrComponents == 3) format = GL_RGB;
-        else format = GL_RGBA;
+        
 
         glBindTexture(GL_TEXTURE_2D,textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
