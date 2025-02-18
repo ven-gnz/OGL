@@ -18,7 +18,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 
-glm::mat4 projection_matrix(float near, float far);
+glm::mat4 vertical_fov_project(float fovY, float aspect ,float front, float back);
 unsigned int loadTexture(const char *path);
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -196,10 +196,11 @@ int main()
         blancoShader.use();
         
         glm::mat4 view = cameroni.GetViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), aspect, 0.1f, 100.0f);
+        //glm::mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), aspect, 0.1f, 100.0f);
+        glm::mat4 projection = vertical_fov_project(45,aspect,0.1,100);
         blancoShader.setMat4("view", view);
         blancoShader.setMat4("projection", projection);
-        // cubes
+        // cubeses
         glm::mat4 model = glm::mat4(1.0f);
         glBindVertexArray(cubeVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -271,6 +272,34 @@ unsigned int loadTexture(char const* path){
 
     }
     return textureID;
+}
+
+
+// symmetric vertical fov projection matrix
+// front can be substituted for near and back to far respectively
+glm::mat4 vertical_fov_project(float fovY, float aspect ,float front, float back)
+{
+    const float deg2rad = glm::acos(-1.0f) / 180;
+
+    float tangent = glm::tan(fovY/ 2 * deg2rad);
+    float top = front * tangent;
+    float right = top * aspect;
+
+
+
+    glm::mat4x4 projection = 
+    
+    { front/right,             0,     0,    0,
+      0,    front/top,               0,    0,
+      0, 0, -(back+front) / (back-front),  -1,
+      0, 0, -(2*back*front)/(back-front),  0
+    };
+
+    return projection;
+
+
+
+
 }
 
 
