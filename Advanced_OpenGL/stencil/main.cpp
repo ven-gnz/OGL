@@ -99,7 +99,6 @@ float fov = 45.0f;
     float lastX = SCR_WIDTH / 2, lastY = SCR_HEIGHT / 2;
 
     Camera cameroni(cameraPos, cameraUp);
-
     
 
 int main()
@@ -135,11 +134,10 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    
     
     Shader blancoShader("shaders/shader.vs","shaders/shader.fs");
+    Shader singleColorShader("shaders/shader.vs","shaders/shaderSingleColor.fs");
+
 
     unsigned int marble = loadTexture("../../resources/marble.jpg"); // cube
     unsigned int metal = loadTexture("../../resources/metal.png"); // floor
@@ -155,9 +153,9 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
     
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0 , 3, GL_FLOAT,GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2,GL_FLOAT, GL_FALSE, 5* sizeof(float), (void*)(3* sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5* sizeof(float), (void*)(3* sizeof(float)));
     glBindVertexArray(0);
 
     unsigned int planeVAO,planeVBO;
@@ -177,11 +175,17 @@ int main()
     blancoShader.use();
     blancoShader.setInt("texture1",0);
 
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE);
     
     
     while (!glfwWindowShouldClose(window))
     {
-        
+
+
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -189,19 +193,40 @@ int main()
         processInput(window);
   
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         
-        blancoShader.use();
-        
+        singleColorShader.use();
+        glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = cameroni.GetViewMatrix();
-        //glm::mat4 projection = glm::perspective(glm::radians(cameroni.Zoom), aspect, 0.1f, 100.0f);
         glm::mat4 projection = vertical_fov_project(45,aspect,0.1,100);
+        singleColorShader.setMat4("view", view);
+        singleColorShader.setMat4("projection", projection);
+
+        blancoShader.use();
         blancoShader.setMat4("view", view);
         blancoShader.setMat4("projection", projection);
-        // cubeses
-        glm::mat4 model = glm::mat4(1.0f);
+
+
+        glStencilMask(0x00);
+        // floor
+
+        glBindVertexArray(planeVAO);
+        glBindTexture(GL_TEXTURE_2D, metal);
+        blancoShader.setMat4("model",glm::mat4(1.0f));
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+
+       
+    
+
+
+
+// First render pass for cubeses
+
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0xFF);
+
         glBindVertexArray(cubeVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, marble);
@@ -212,12 +237,36 @@ int main()
         model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
         blancoShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        // floor
-        glBindVertexArray(planeVAO);
-        glBindTexture(GL_TEXTURE_2D, metal);
-        blancoShader.setMat4("model", glm::mat4(1.0f));
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+// Second render pass for cubes
+
+
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00);
+        glDisable(GL_DEPTH_TEST);
+        singleColorShader.use();
+        float scale = 1.1f;
+
+        glBindVertexArray(cubeVAO);
+        glBindTexture(GL_TEXTURE_2D, marble);
+        glBindVertexArray(cubeVAO);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+        model = glm::scale(model, glm::vec3(scale,scale,scale));
+        singleColorShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(scale,scale,scale));
+        singleColorShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
         glBindVertexArray(0);
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
+        glEnable(GL_DEPTH_TEST);
+        
 
 
         glfwSwapBuffers(window);
