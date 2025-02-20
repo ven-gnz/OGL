@@ -115,12 +115,12 @@ float fov = 45.0f;
 int main()
 {
 
-vector<glm::vec3> vegetation;
-vegetation.push_back(glm::vec3(-1.5f,  0.0f, -0.48f));
-vegetation.push_back(glm::vec3( 1.5f,  0.0f,  0.51f));
-vegetation.push_back(glm::vec3( 0.0f,  0.0f,  0.7f));
-vegetation.push_back(glm::vec3(-0.3f,  0.0f, -2.3f));
-vegetation.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));  
+vector<glm::vec3> windows;
+windows.push_back(glm::vec3(-1.5f,  0.0f, -0.48f));
+windows.push_back(glm::vec3( 1.5f,  0.0f,  0.51f));
+windows.push_back(glm::vec3( 0.0f,  0.0f,  0.7f));
+windows.push_back(glm::vec3(-0.3f,  0.0f, -2.3f));
+windows.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));  
 
    
     
@@ -160,6 +160,7 @@ vegetation.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));
     unsigned int marble = loadTexture("../../resources/marble.jpg"); // cube
     unsigned int metal = loadTexture("../../resources/metal.png"); // floor
     unsigned int grass = loadTexture("../../resources/grass.png");
+    unsigned int win = loadTexture("../../resources/window.png"); 
 
 
 
@@ -193,9 +194,10 @@ vegetation.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));
 
     unsigned int transparentVAO, transparentVBO;
     glGenVertexArrays(1, &transparentVAO);
-    glGenBuffers(1, &cubeVBO);
+    glGenBuffers(1, &transparentVBO);
+    glBindVertexArray(transparentVAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER,transparentVAO);
+    glBindBuffer(GL_ARRAY_BUFFER,transparentVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
@@ -218,7 +220,9 @@ vegetation.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));
     //Stencil test performed before depth test, so first value is when stencil passes depth fails, second is both oassing
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE);
-    
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
     
     while (!glfwWindowShouldClose(window))
     {
@@ -255,12 +259,7 @@ vegetation.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
 
-       
-    
-
-
-
-// First render pass for cubeses
+// First (and only) render pass for cubeses
 
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
@@ -276,34 +275,32 @@ vegetation.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));
         blancoShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-// Second render pass for cubes
+
+         
+
+        glBindVertexArray(transparentVAO);
+    glBindTexture(GL_TEXTURE_2D, win);
+    std::map<float, glm::vec3> sorted;
+    for (unsigned int i = 0; i < windows.size(); i++)
+    {
+    float distance = glm::length(cameroni.Position - windows[i]);
+    sorted[distance] = windows[i];
+    }
 
 
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilMask(0x00);
-        glDisable(GL_DEPTH_TEST);
-        singleColorShader.use();
-        float scale = 1.1f;
-
-        glBindVertexArray(cubeVAO);
-        glBindTexture(GL_TEXTURE_2D, marble);
-        glBindVertexArray(cubeVAO);
+    for(std::map <float,glm::vec3>::reverse_iterator it = sorted.rbegin(); it!= sorted.rend(); it++) 
+    {
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-        model = glm::scale(model, glm::vec3(scale,scale,scale));
-        singleColorShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(scale,scale,scale));
-        singleColorShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
+        model = glm::translate(model, it->second);				
+        blancoShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+    }  
 
         glBindVertexArray(0);
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 0, 0xFF);
         glEnable(GL_DEPTH_TEST);
+        
         
 
 
