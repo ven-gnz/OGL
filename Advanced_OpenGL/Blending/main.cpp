@@ -99,10 +99,28 @@ float fov = 45.0f;
     float lastX = SCR_WIDTH / 2, lastY = SCR_HEIGHT / 2;
 
     Camera cameroni(cameraPos, cameraUp);
+
+    float transparentVertices[] = {
+        // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+        0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+        0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+        1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+
+        0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+        1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+        1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+    };
     
 
 int main()
 {
+
+vector<glm::vec3> vegetation;
+vegetation.push_back(glm::vec3(-1.5f,  0.0f, -0.48f));
+vegetation.push_back(glm::vec3( 1.5f,  0.0f,  0.51f));
+vegetation.push_back(glm::vec3( 0.0f,  0.0f,  0.7f));
+vegetation.push_back(glm::vec3(-0.3f,  0.0f, -2.3f));
+vegetation.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));  
 
    
     
@@ -141,6 +159,7 @@ int main()
 
     unsigned int marble = loadTexture("../../resources/marble.jpg"); // cube
     unsigned int metal = loadTexture("../../resources/metal.png"); // floor
+    unsigned int grass = loadTexture("../../resources/grass.png");
 
 
 
@@ -171,6 +190,24 @@ int main()
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3* sizeof(float)));
     glBindVertexArray(0);
+
+    unsigned int transparentVAO, transparentVBO;
+    glGenVertexArrays(1, &transparentVAO);
+    glGenBuffers(1, &cubeVBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER,transparentVAO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 5 * sizeof(float), (void*)0);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1,2, GL_FLOAT, GL_FLOAT, 5 * sizeof(float), (void*)(3*sizeof(float)));
+    glBindVertexArray(0);
+
+
+    glEnableVertexAttribArray(0);
+    
 
     blancoShader.use();
     blancoShader.setInt("texture1",0);
@@ -302,6 +339,7 @@ unsigned int loadTexture(char const* path){
         if (nrComponents == 1) format = GL_RED;
         if (nrComponents == 3) format = GL_RGB;
         
+        
 
         glBindTexture(GL_TEXTURE_2D,textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
@@ -336,17 +374,14 @@ glm::mat4 vertical_fov_project(float fovY, float aspect ,float front, float back
     float right = top * aspect;
 
     glm::mat4x4 projection = 
-    
+
     { front/right,             0,     0,    0,
-      0,    front/top,               0,    0,
+      0,     front/top,               0,    0,
       0, 0, -(back+front) / (back-front),  -1,
-      0, 0, -(2*back*front)/(back-front),  0
+      0, 0, -(2*back*front)/(back-front),   0
     };
 
     return projection;
-
-
-
 
 }
 
