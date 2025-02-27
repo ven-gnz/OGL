@@ -26,6 +26,51 @@ const unsigned int SCR_HEIGHT = 600;
 const float aspect = (float) SCR_WIDTH / (float) SCR_HEIGHT;
 float fov = 45.0f;
 
+float clockVertices[] = {
+ // Back face 
+-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // Bottom-left
+ 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right
+ 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+ 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left 
+// Front face 
+-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+ 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+ 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+ 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left
+// Left face 
+-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-left
+-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right 
+-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right 
+// Right face 
+ 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+ 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+ 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+ 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+ 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+ 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+ // Bottom face
+ -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+  0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+  0.5f, -0.5f, -0.5f,  1.0f, 1.0f, // top-left
+  0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+ -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right 
+ -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+ // Top face 
+ -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+  0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right     
+  0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+  0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+ -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,  // bottom-left
+ -0.5f,  0.5f, -0.5f,  0.0f, 1.0f // top-left
+};
+
 
 
 float cubeVertices[] = {
@@ -66,11 +111,11 @@ float cubeVertices[] = {
      -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
      // Top face
      -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+      0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
       0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
-      0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right     
       0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left
      -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
-     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left        
 };
 
      float planeVertices[] = {
@@ -150,7 +195,7 @@ int main()
     glBindVertexArray(cubeVAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(clockVertices), &clockVertices, GL_STATIC_DRAW);
     
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0 , 3, GL_FLOAT,GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -182,8 +227,8 @@ int main()
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE);
 
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
     glFrontFace(GL_CW);
     
     while (!glfwWindowShouldClose(window))

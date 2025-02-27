@@ -1,0 +1,19 @@
+﻿  camera.cpp
+  Light.cpp
+  main.cpp
+C:\Users\rapul\RR\OGL\Advanced_OpenGL\Framebuffers\main.cpp(193,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\rapul\RR\OGL\Advanced_OpenGL\Framebuffers\main.cpp(206,63): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\rapul\RR\OGL\Advanced_OpenGL\Framebuffers\main.cpp(381,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\rapul\RR\OGL\Advanced_OpenGL\Framebuffers\main.cpp(382,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\rapul\RR\OGL\Advanced_OpenGL\Framebuffers\main.cpp(386,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\rapul\RR\OGL\Advanced_OpenGL\Framebuffers\main.cpp(387,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\rapul\RR\OGL\Advanced_OpenGL\Framebuffers\main.cpp(388,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\rapul\RR\OGL\Advanced_OpenGL\Framebuffers\main.cpp(389,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Material.cpp
+  model.cpp
+  shader.cpp
+  stb_image.cpp
+  Generating Code...
+  glad.c
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Framebuffer.vcxproj -> C:\Users\rapul\RR\OGL\x64\Debug\Framebuffer.exe
