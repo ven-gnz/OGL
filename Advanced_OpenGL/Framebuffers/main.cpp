@@ -138,14 +138,14 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
     
     Shader blancoShader("shaders/scene.vs","shaders/scene.fs");
-    Shader quadShader("shaders/quadshader.vs","shaders/.fs");
+    Shader quadShader("shaders/quadshader.vs","shaders/quadshader.fs");
 
-    unsigned int marble = loadTexture("../../resources/marble.jpg"); // cube
+    unsigned int container = loadTexture("../../resources/container.jpg"); // cube
     unsigned int metal = loadTexture("../../resources/metal.png"); // floor
 
 
@@ -202,8 +202,6 @@ int main()
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-
-
     unsigned int textureColorBuffer;
     glGenTextures(1, &textureColorBuffer);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
@@ -212,17 +210,19 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
 
-
     unsigned int rbo;
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "hooray frambuffer" << std::endl;
     }
 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     
     while (!glfwWindowShouldClose(window))
@@ -242,7 +242,7 @@ int main()
         
 
         blancoShader.use();
-        glm::mat4 projection = vertical_fov_project(45, aspect, 0.1f, 100.0f);
+        glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1f, 100.0f);
         blancoShader.setMat4("projection", projection);
         glm::mat4 view = cameroni.GetViewMatrix();
         blancoShader.setMat4("view", view);
@@ -259,7 +259,7 @@ int main()
         // cub
         glBindVertexArray(cubeVAO);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, marble);
+        glBindTexture(GL_TEXTURE_2D, container);
         model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
         blancoShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -267,7 +267,7 @@ int main()
         model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
         blancoShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
+        glBindVertexArray(0);
 
 
 
@@ -294,7 +294,7 @@ int main()
 
     glDeleteVertexArrays(1, &planeVAO);
     glDeleteBuffers(1, &planeVBO);
-
+    glDeleteRenderbuffers(1 ,&rbo);
     glDeleteFramebuffers(1, &framebuffer);
 
     glfwTerminate();
