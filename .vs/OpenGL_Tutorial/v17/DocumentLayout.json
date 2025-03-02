@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\rapul\\RR\\OGL\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{FD8E3AC8-CADA-4262-A358-E39A73F8907C}|Advanced_OpenGL\\Framebuffers\\Framebuffer.vcxproj|C:\\Users\\rapul\\RR\\OGL\\Advanced_OpenGL\\Framebuffers\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{FD8E3AC8-CADA-4262-A358-E39A73F8907C}|Advanced_OpenGL\\Framebuffers\\Framebuffer.vcxproj|solutionrelative:Advanced_OpenGL\\Framebuffers\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\rapul\\RR\\OGL\\Advanced_OpenGL\\Framebuffers\\main.cpp",
+              "RelativeDocumentMoniker": "Advanced_OpenGL\\Framebuffers\\main.cpp",
+              "ToolTip": "C:\\Users\\rapul\\RR\\OGL\\Advanced_OpenGL\\Framebuffers\\main.cpp",
+              "RelativeToolTip": "Advanced_OpenGL\\Framebuffers\\main.cpp",
+              "ViewState": "AgIAAL4AAAAAAAAAAAAUwNYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-02T12:05:16.412Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

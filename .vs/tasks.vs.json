@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-stencil",
+      "appliesTo": "Advanced_OpenGL/stencil/stencil.vcxproj",
+      "type": "msbuild"
+    }
+  ]
+}
