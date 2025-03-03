@@ -8,4 +8,6 @@ obj/
 *.user
 *.ipch
 *.log
+*.sln
 *.cacheDependencies/
+Dependencies/
