@@ -17,3 +17,4 @@ obj/
 *.cacheDependencies/
 Dependencies/
 x64/
+**/x64/
