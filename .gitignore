@@ -9,5 +9,11 @@ obj/
 *.ipch
 *.log
 *.sln
+*.props
+*.filters
+*.vcxproj
+*.vcxproj.user
+*.user
 *.cacheDependencies/
 Dependencies/
+x64/
