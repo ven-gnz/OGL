@@ -73,6 +73,97 @@ float vertices[] = {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 };
 
+float positions[] = {
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+
+};
+
+float normals[] = {
+
+      0.0f,  0.0f, -1.0f,
+      0.0f,  0.0f, -1.0f,
+      0.0f,  0.0f, -1.0f,
+      0.0f,  0.0f, -1.0f,
+      0.0f,  0.0f, -1.0f,
+      0.0f,  0.0f, -1.0f,
+
+      0.0f,  0.0f, 1.0f,
+      0.0f,  0.0f, 1.0f,
+      0.0f,  0.0f, 1.0f,
+      0.0f,  0.0f, 1.0f,
+      0.0f,  0.0f, 1.0f,
+      0.0f,  0.0f, 1.0f,
+
+     -1.0f,  0.0f,  0.0f,
+     -1.0f,  0.0f,  0.0f,
+     -1.0f,  0.0f,  0.0f,
+     -1.0f,  0.0f,  0.0f,
+     -1.0f,  0.0f,  0.0f,
+     -1.0f,  0.0f,  0.0f,
+
+      1.0f,  0.0f,  0.0f,
+      1.0f,  0.0f,  0.0f,
+      1.0f,  0.0f,  0.0f,
+      1.0f,  0.0f,  0.0f,
+      1.0f,  0.0f,  0.0f,
+      1.0f,  0.0f,  0.0f,
+
+      0.0f, -1.0f,  0.0f,
+      0.0f, -1.0f,  0.0f,
+      0.0f, -1.0f,  0.0f,
+      0.0f, -1.0f,  0.0f,
+      0.0f, -1.0f,  0.0f,
+      0.0f, -1.0f,  0.0f,
+
+      0.0f,  1.0f,  0.0f,
+      0.0f,  1.0f,  0.0f,
+      0.0f,  1.0f,  0.0f,
+      0.0f,  1.0f,  0.0f,
+      0.0f,  1.0f,  0.0f,
+      0.0f,  1.0f,  0.0f
+
+};
+
      float planeVertices[] = {
         // positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
          5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
@@ -201,6 +292,8 @@ int main()
     glGenBuffers(1, &skyboxVBO);
     glBindVertexArray(skyboxVAO);
 
+
+
     glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
@@ -210,15 +303,24 @@ int main()
     glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1 , &cubeVBO);
     glBindVertexArray(cubeVAO);
-    glBindBuffer(cubeVBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+
+    size_t pos = sizeof(positions);
+    size_t norm = sizeof(normals);
+
+    glBufferData(GL_ARRAY_BUFFER, pos + norm, nullptr, GL_STATIC_DRAW);
+
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(positions), &positions);
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(positions), sizeof(normals), &normals);
     
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0 , 3, GL_FLOAT,GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0 , 3, GL_FLOAT,GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(positions)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(positions)));
     glBindVertexArray(0);
+
+
 
 
 
