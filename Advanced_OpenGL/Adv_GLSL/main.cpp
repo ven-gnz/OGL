@@ -164,20 +164,6 @@ float texCoords[] = {
     0.0f, 1.0f
 };
 
-
-
-
-     float planeVertices[] = {
-        // positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
-         5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-        -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
-        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-
-         5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-         5.0f, -0.5f, -5.0f,  2.0f, 2.0f								
-    };
-
     glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f,0.0f,-1.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f,1.0f,0.0f);
@@ -238,9 +224,9 @@ int main()
     
     Shader blancoShader("shaders/shader.vs","shaders/shader.fs");
 
-    unsigned int frontTexture = loadTexture("../../resources/marble.jpg"); // 0
-    unsigned int backTexture = loadTexture("../../resources/metal.png"); // 1
-
+   // unsigned int frontTexture = loadTexture("../../resources/marble.jpg"); // 0
+   // unsigned int backTexture = loadTexture("../../resources/metal.png"); // 1
+    unsigned int texture = loadTexture("../../resources/container.jpg");
 
     unsigned int cubeVAO, cubeVBO;
     glGenVertexArrays(1, &cubeVAO);
@@ -253,27 +239,33 @@ int main()
     size_t norm = sizeof(normals);
     size_t tex = sizeof(texCoords);
 
-    glBufferData(GL_ARRAY_BUFFER, pos + norm + tex, nullptr, GL_STATIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, pos + norm + tex, nullptr, GL_STATIC_DRAW);
+    //glBufferSubData(GL_ARRAY_BUFFER, 0, pos, &positions);
+    //glBufferSubData(GL_ARRAY_BUFFER, pos, norm, &normals);
+    //glBufferSubData(GL_ARRAY_BUFFER, pos+norm, tex, &texCoords);
+    
+    glBufferData(GL_ARRAY_BUFFER, pos, nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, pos, &positions);
+    
 
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(positions), &positions);
-    glBufferSubData(GL_ARRAY_BUFFER, sizeof(positions), sizeof(normals), &normals);
-    glBufferSubData(GL_ARRAY_BUFFER, sizeof(positions)+sizeof(normals), sizeof(texCoords), &texCoords);
     
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0 , 3, GL_FLOAT,GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(positions)));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(sizeof(positions) + sizeof(normals)));
-    glBindVertexArray(0);
+    //glEnableVertexAttribArray(1);
+    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(positions)));
+    //glEnableVertexAttribArray(2);
+    //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(sizeof(positions) + sizeof(normals)));
+    //glBindVertexArray(0);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_PROGRAM_POINT_SIZE);
 
 
     blancoShader.use();
-    blancoShader.setInt("frontTexture", 0); // marble
-    blancoShader.setInt("backTexture", 1); // metal
+    //blancoShader.setInt("frontTexture", 0); // marble
+    //blancoShader.setInt("backTexture", 1); // metal
+    blancoShader.setInt("texture", 0);
+
 
     
     while (!glfwWindowShouldClose(window))
@@ -288,19 +280,21 @@ int main()
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
-        glDepthFunc(GL_LESS);
+    
         blancoShader.use();
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = cameroni.GetViewMatrix();
         glm::mat4 projection = vertical_fov_project(45,aspect,0.1,100);
         blancoShader.setMat4("view", view);
         blancoShader.setMat4("projection", projection);
-        blancoShader.setVec3("cameraPos", cameroni.Position);
         glBindVertexArray(cubeVAO);
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, frontTexture);
+        //glActiveTexture(GL_TEXTURE1);
+        //glBindTexture(GL_TEXTURE_2D, backTexture);
+
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, frontTexture);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, backTexture);
+        glBindTexture(GL_TEXTURE_2D, texture);
         model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
         blancoShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
