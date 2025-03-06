@@ -28,10 +28,10 @@ const float aspect = (float) SCR_WIDTH / (float) SCR_HEIGHT;
 float fov = 45.0f;
 
 float points[] = {
-    -0.5f,  0.5f, // top-left
-     0.5f,  0.5f, // top-right
-     0.5f, -0.5f, // bottom-right
-    -0.5f, -0.5f  // bottom-left
+    -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
+     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
+     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
+    -0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
 };
 
 
@@ -88,17 +88,19 @@ int main()
 
 
     unsigned int VAO, VBO;
-    glGenBuffers(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-    
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+    glBindVertexArray(0);
    
-    glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1, 100);
+    // glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1, 100);
     
     while (!glfwWindowShouldClose(window))
     {
@@ -117,7 +119,6 @@ int main()
         testShader.use();
         glBindVertexArray(VAO);
         glDrawArrays(GL_POINTS, 0, 4);
-       
        
 
         glfwSwapBuffers(window);
