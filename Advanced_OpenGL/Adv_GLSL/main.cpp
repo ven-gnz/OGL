@@ -222,11 +222,35 @@ int main()
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
     
-    Shader blancoShader("shaders/shader.vs","shaders/shader.fs");
+    Shader red("shaders/shader.vs","shaders/red.frag");
+    Shader blue("shaders/shader.vs", "shaders/blue.frag");
+    Shader green("shaders/shader.vs", "shaders/green.frag");
+    Shader yellow("shaders/shader.vs", "shaders/yellow.frag");
+
+    unsigned int uniformBlockIndexRed = glGetUniformBlockIndex(red.ID, "Matrices");
+    unsigned int uniformBlockIndexBlue = glGetUniformBlockIndex(blue.ID, "Matrices");
+    unsigned int uniformBlockIndexGreen = glGetUniformBlockIndex(green.ID, "Matrices");
+    unsigned int uniformBlockIndexYellow = glGetUniformBlockIndex(yellow.ID, "Matrices");
+
+    glUniformBlockBinding(red.ID, uniformBlockIndexRed, 0);
+    glUniformBlockBinding(blue.ID, uniformBlockIndexBlue, 0);
+    glUniformBlockBinding(green.ID, uniformBlockIndexGreen, 0);
+    glUniformBlockBinding(yellow.ID, uniformBlockIndexYellow, 0);
+
+    
 
    // unsigned int frontTexture = loadTexture("../../resources/marble.jpg"); // 0
    // unsigned int backTexture = loadTexture("../../resources/metal.png"); // 1
-    unsigned int texture = loadTexture("../../resources/container.jpg");
+   // unsigned int texture = loadTexture("../../resources/container.jpg");
+
+    unsigned int uboMatrices;
+    glGenBuffers(1 ,&uboMatrices);
+    glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+    glBufferData(GL_UNIFORM_BUFFER,2*sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
+
 
     unsigned int cubeVAO, cubeVBO;
     glGenVertexArrays(1, &cubeVAO);
@@ -261,10 +285,14 @@ int main()
     glEnable(GL_PROGRAM_POINT_SIZE);
 
 
-    blancoShader.use();
+    
     //blancoShader.setInt("frontTexture", 0); // marble
     //blancoShader.setInt("backTexture", 1); // metal
-    blancoShader.setInt("texture", 0);
+   
+    glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1, 100);
+    glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 
     
@@ -280,28 +308,36 @@ int main()
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
-    
-        blancoShader.use();
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = cameroni.GetViewMatrix();
-        glm::mat4 projection = vertical_fov_project(45,aspect,0.1,100);
-        blancoShader.setMat4("view", view);
-        blancoShader.setMat4("projection", projection);
+        glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+       
         glBindVertexArray(cubeVAO);
         //glActiveTexture(GL_TEXTURE0);
         //glBindTexture(GL_TEXTURE_2D, frontTexture);
         //glActiveTexture(GL_TEXTURE1);
         //glBindTexture(GL_TEXTURE_2D, backTexture);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        red.use();
         model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-        blancoShader.setMat4("model", model);
+        red.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        green.use();
+        model = glm::translate(model, glm::vec3(0.0f, 1.0f, -1.0f));
+        green.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        yellow.use();
+        model = glm::translate(model, glm::vec3(-1.0f, -1.0f, -1.0f));
+        yellow.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        blue.use();
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-        blancoShader.setMat4("model", model);
+        model = glm::translate(model, glm::vec3(1.0f, 1.0f, 0.0f));
+        blue.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+       
+       
 
         glfwSwapBuffers(window);
         glfwPollEvents();
