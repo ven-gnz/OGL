@@ -53,38 +53,40 @@ float points[] = {
 
     
 
-int main()
-{
-
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Geometry_Shaders", NULL, NULL);
-    
-     if (window == NULL)
+    int main()
     {
-        std::cerr << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-    }
-   
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    
 
-     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
+        glfwInit();
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-  //  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
-    Shader testShader("shaders/shader.vs", "shaders/shader.fs", "shaders/geo.g");
+        GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Geometry_Shaders", NULL, NULL);
+
+        if (window == NULL)
+        {
+            std::cerr << "Failed to create GLFW window" << std::endl;
+            glfwTerminate();
+        }
+
+        glfwMakeContextCurrent(window);
+        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        {
+            std::cerr << "Failed to initialize GLAD" << std::endl;
+            glfwTerminate();
+            exit(EXIT_FAILURE);
+        }
+
+        //  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetCursorPosCallback(window, mouse_callback);
+        glfwSetScrollCallback(window, scroll_callback);
+        Shader testShader("shaders/shader.vs", "shaders/shader.fs", "shaders/geo.g");
+
+        Model backpack("../../resources/backpack/backpack.obj");
 
 
     unsigned int VAO, VBO;
@@ -100,7 +102,8 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
     glBindVertexArray(0);
    
-    // glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1, 100);
+     glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1, 100);
+     glEnable(GL_DEPTH_TEST);
     
     while (!glfwWindowShouldClose(window))
     {
@@ -114,11 +117,16 @@ int main()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
-       // glm::mat4 model = glm::mat4(1.0f);
-       // glm::mat4 view = cameroni.GetViewMatrix();
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 view = cameroni.GetViewMatrix();
         testShader.use();
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_POINTS, 0, 4);
+        testShader.setMat4("projection", projection);
+        testShader.setMat4("view", view);
+        testShader.setMat4("model", model);
+
+        testShader.setFloat("time", glfwGetTime());
+        backpack.Draw(testShader);
+       
        
 
         glfwSwapBuffers(window);
