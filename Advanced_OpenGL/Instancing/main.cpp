@@ -96,43 +96,51 @@ float quadVertices[] = {
         glfwSetScrollCallback(window, scroll_callback);
         Shader testShader("shaders/shader.vs", "shaders/shader.fs", nullptr);
 
+        glm::vec2 translations[100];
+        int index = 0;
+        float offset = 0.1f;
+        for (int y = -10; y < 10; y += 2)
+        {
+            for (int x = -10; x < 10; x += 2)
+            {
+                glm::vec2 translation;
+                translation.x = (float)x / 10.0f + offset;
+                translation.y = (float)y / 10.0f + offset;
+                translations[index++] = translation;
+            }
+        }
+    
 
-    unsigned int VAO, VBO;
-    glGenBuffers(1, &VBO);
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        unsigned int instanceVBO;
+        glGenBuffers(1, &instanceVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100, &translations[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+  
 
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
-    glBindVertexArray(0);
+        unsigned int VAO, VBO;
+        glGenBuffers(1, &VBO);
+        glGenVertexArrays(1, &VAO);
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices),quadVertices, GL_STATIC_DRAW);
+
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+
+
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glVertexAttribDivisor(2, 1);
    
-     glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1, 100);
-     glEnable(GL_DEPTH_TEST);
+         glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1, 100);
+         glEnable(GL_DEPTH_TEST);
 
-     glm::vec2 translations[100];
-     int index = 0;
-     float offset = 0.1f;
-     for (int y = -10; y < 10; y += 2)
-     {
-         for (int x = -10; x < 10; x += 2)
-         {
-             glm::vec2 translation;
-             translation.x = (float)x / 10.0f + offset;
-             translation.y = (float)y / 10.0f + offset;
-             translations[index++] = translation;
-         }
-     }
-
-     testShader.use();
-     for (unsigned int i = 0; i < 100; i++)
-     {
-         testShader.setVec2(("offsets[" + std::to_string(i) + "]"), translations[i]);
-
-     }
     
     while (!glfwWindowShouldClose(window))
     {
@@ -152,6 +160,7 @@ float quadVertices[] = {
         testShader.use();
         glBindVertexArray(VAO);
         glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100);
+        glBindVertexArray(0);
       
        
         glfwSwapBuffers(window);
