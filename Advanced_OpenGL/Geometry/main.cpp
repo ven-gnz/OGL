@@ -16,7 +16,6 @@ void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-unsigned int loadCubeMap(std::vector<std::string> faces);
 
 
 glm::mat4 vertical_fov_project(float fovY, float aspect ,float front, float back);
@@ -85,6 +84,7 @@ float points[] = {
         glfwSetCursorPosCallback(window, mouse_callback);
         glfwSetScrollCallback(window, scroll_callback);
         Shader testShader("shaders/shader.vs", "shaders/shader.fs", "shaders/geo.g");
+        Shader normalVisualiser("shaders/normals.vs", "shaders/normals.fs", "shaders/normals.gs");
 
         Model backpack("../../resources/backpack/backpack.obj");
 
@@ -126,7 +126,11 @@ float points[] = {
 
         testShader.setFloat("time", glfwGetTime());
         backpack.Draw(testShader);
-       
+        normalVisualiser.use();
+        normalVisualiser.setMat4("projection", projection);
+        normalVisualiser.setMat4("view", view);
+        normalVisualiser.setMat4("model", model);
+        backpack.Draw(normalVisualiser);
        
 
         glfwSwapBuffers(window);
