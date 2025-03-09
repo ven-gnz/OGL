@@ -18,6 +18,10 @@ void Model::Draw(Shader &shader) {
             meshes[i].Draw(shader);
 }
 
+const std::vector<Mesh>& Model::getMeshes() const { return meshes; }
+
+const std::vector<Texture> Model::getTextures() const { return textures_loaded; }
+
 
 void Model::loadModel(string const &path){
 

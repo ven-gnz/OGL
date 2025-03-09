@@ -29,6 +29,8 @@ public:
 
     // constructor, expects a filepath to a 3D model.
     Model(string const &path, bool gamma = false);
+    const std::vector<Mesh>& getMeshes() const;
+    const std::vector<Texture> getTextures() const;
 
     void Draw(Shader &shader);
     
