@@ -45,7 +45,7 @@ float quadVertices[] = {
 };
 
 
-    glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f);
+    glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,55.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f,0.0f,-1.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f,1.0f,0.0f);
     
@@ -72,7 +72,7 @@ float quadVertices[] = {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-        GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Geometry_Shaders", NULL, NULL);
+        GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Isntance Rendering", NULL, NULL);
 
         if (window == NULL)
         {
@@ -95,52 +95,41 @@ float quadVertices[] = {
         glfwSetCursorPosCallback(window, mouse_callback);
         glfwSetScrollCallback(window, scroll_callback);
         Shader testShader("shaders/shader.vs", "shaders/shader.fs", nullptr);
+        Model planet("../../resources/planet/planet.obj");
+        Model asteroid("../../resources/rock/rock.obj");
 
-        glm::vec2 translations[100];
-        int index = 0;
-        float offset = 0.1f;
-        for (int y = -10; y < 10; y += 2)
-        {
-            for (int x = -10; x < 10; x += 2)
-            {
-                glm::vec2 translation;
-                translation.x = (float)x / 10.0f + offset;
-                translation.y = (float)y / 10.0f + offset;
-                translations[index++] = translation;
-            }
+        unsigned int amount = 100;
+        glm::mat4* modelMatrices;
+        modelMatrices = new glm::mat4[amount];
+        srand(glfwGetTime());
+        float r = 50.0;
+        float offset = 2.5f;
+
+        for (unsigned int i = 0; i < amount; i++) {
+
+            glm::mat4 model = glm::mat4(1.0f);
+            float angle = float(i) / (float)amount * 360.0f;
+            float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+            float x = sin(angle) * r + displacement;
+            displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+            float y = displacement * 0.4f;
+            displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+            float z = cos(angle) * r + displacement;
+            model = glm::translate(model, glm::vec3(x, y, z));
+
+            float scale = (rand() & 20) / 100.0f + 0.05f;
+            model = glm::scale(model, glm::vec3(scale));
+
+            float rotAngle = (rand() % 360);
+            model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+
+            modelMatrices[i] = model;
         }
-    
 
-        unsigned int instanceVBO;
-        glGenBuffers(1, &instanceVBO);
-        glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100, &translations[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-  
-
-        unsigned int VAO, VBO;
-        glGenBuffers(1, &VBO);
-        glGenVertexArrays(1, &VAO);
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices),quadVertices, GL_STATIC_DRAW);
-
-
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
-
-
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glVertexAttribDivisor(2, 1);
+        
    
-         glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1, 100);
+         
          glEnable(GL_DEPTH_TEST);
-
     
     while (!glfwWindowShouldClose(window))
     {
@@ -156,12 +145,22 @@ float quadVertices[] = {
    
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = cameroni.GetViewMatrix();
+        glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1, 1000.0f);
+
+        testShader.setMat4("projection", projection);
+        testShader.setMat4("view", view);
     
         testShader.use();
-        glBindVertexArray(VAO);
-        glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100);
-        glBindVertexArray(0);
-      
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+        testShader.setMat4("model", model);
+        planet.Draw(testShader);
+
+        for (unsigned int i = 0; i < amount; i++) {
+            testShader.setMat4("model", modelMatrices[i]);
+            asteroid.Draw(testShader);
+        }
        
         glfwSwapBuffers(window);
         glfwPollEvents();
