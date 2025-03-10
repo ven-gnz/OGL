@@ -101,7 +101,7 @@ float quadVertices[] = {
 
 
 
-        unsigned int amount = 100;
+        unsigned int amount = 100000;
         glm::mat4* modelMatrices;
         modelMatrices = new glm::mat4[amount];
         srand(glfwGetTime());
@@ -134,34 +134,37 @@ float quadVertices[] = {
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
         glBufferData(GL_ARRAY_BUFFER, amount * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
 
-        for (unsigned int i = 0; i < asteroid.meshes.size(); i++) {
+        for (unsigned int i = 0; i < asteroid.getMeshes().size(); i++) {
 
 
-            unsigned int VAO = asteroid.meshes[i].VAO;
+            unsigned int VAO = asteroid.getMeshes()[i].VAO;
             glBindVertexArray(VAO);
 
             std::size_t vec4Size = sizeof(glm::vec4);
             glEnableVertexAttribArray(3);
-            glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+            glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)0);
             glEnableVertexAttribArray(4);
-            glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(1 * sizeof(glm::vec4)));
+            glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(1 * sizeof(glm::vec4)));
             glEnableVertexAttribArray(5);
-            glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+            glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(2 * sizeof(glm::vec4)));
             glEnableVertexAttribArray(6);
-            glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+            glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(3 * sizeof(glm::vec4)));
 
+            
             glVertexAttribDivisor(3, 1);
             glVertexAttribDivisor(4, 1);
             glVertexAttribDivisor(5, 1);
             glVertexAttribDivisor(6, 1);
             glBindVertexArray(0);
 
+
+
         }
 
-
+        
    
          
-        glEnable(GL_DEPTH_TEST);
+         glEnable(GL_DEPTH_TEST);
     
     while (!glfwWindowShouldClose(window))
     {
@@ -191,25 +194,16 @@ float quadVertices[] = {
         steroidShader.setInt("texture_diffuse1", 0);
         steroidShader.setMat4("projection", projection);
         steroidShader.setMat4("view", view);
-
     //    steroidShader.setFloat("r", r);
     //    steroidShader.setFloat("time", glfwGetTime());
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, asteroid.textures_loaded[0].id);
-        
+        glBindTexture(GL_TEXTURE_2D, asteroid.getTextures()[0].id);
 
-        for (unsigned int i = 0; i < asteroid.meshes.size(); i++) {
-    
-
-                glBindVertexArray(asteroid.meshes[i].VAO);
-
-                glDrawElementsInstanced(
-                    GL_TRIANGLES,
-                    static_cast<unsigned int>(asteroid.meshes[i].indices.size()), GL_UNSIGNED_INT, 0, amount
-                );
-                glBindVertexArray(0);
-        
-          
+        for (unsigned int i = 0; i < asteroid.getMeshes().size(); i++) {
+            glBindVertexArray(asteroid.getMeshes()[i].VAO);
+            glDrawElementsInstanced(
+                GL_TRIANGLES, asteroid.getMeshes()[i].indices.size(), GL_UNSIGNED_INT, 0, amount
+            );
         }
        
         glfwSwapBuffers(window);
