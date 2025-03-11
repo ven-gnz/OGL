@@ -26,26 +26,64 @@ const unsigned int SCR_HEIGHT = 600;
 const float aspect = (float) SCR_WIDTH / (float) SCR_HEIGHT;
 float fov = 45.0f;
 
-float points[] = {
-    -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
-     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
-     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
-    -0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
+float cubeVertices[] = {
+    // positions       
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f
 };
 
-float quadVertices[] = {
-    // positions     // colors
-    -0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
-     0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
-    -0.05f, -0.05f,  0.0f, 0.0f, 1.0f,
+float quadVertices[] = {   // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+    // positions   // texCoords
+    -1.0f,  1.0f,  0.0f, 1.0f,
+    -1.0f, -1.0f,  0.0f, 0.0f,
+     1.0f, -1.0f,  1.0f, 0.0f,
 
-    -0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
-     0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
-     0.05f,  0.05f,  0.0f, 1.0f, 1.0f
+    -1.0f,  1.0f,  0.0f, 1.0f,
+     1.0f, -1.0f,  1.0f, 0.0f,
+     1.0f,  1.0f,  1.0f, 1.0f
 };
 
 
-    glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,55.0f);
+    glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,5.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f,0.0f,-1.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f,1.0f,0.0f);
     
@@ -72,7 +110,9 @@ float quadVertices[] = {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-        GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Isntance Rendering", NULL, NULL);
+        GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Saila", NULL, NULL);
+
+       // glfwWindowHint(GLFW_SAMPLES, 4);
 
         if (window == NULL)
         {
@@ -94,78 +134,77 @@ float quadVertices[] = {
         //  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetCursorPosCallback(window, mouse_callback);
         glfwSetScrollCallback(window, scroll_callback);
-        Shader steroidShader("shaders/shader.vs", "shaders/shader.fs", nullptr);
-        Shader planetShader("shaders/planet.vs", "shaders/planet.fs", nullptr);
-        Model planet("../../../resources/planet/planet.obj");
-        Model asteroid("../../../resources/rock/rock.obj");
+        Shader cubeBoy("shaders/shader.vs", "shaders/shader.fs", nullptr);
+        Shader quad("shaders/quad.vs", "shaders/quad.fs", nullptr);
+
+        unsigned int cubeVAO, cubeVBO;
+        glGenBuffers(1, &cubeVBO);
+        glGenVertexArrays(1, &cubeVAO);
+
+        glBindVertexArray(cubeVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+        unsigned int quadVAO, quadVBO;
+        glGenBuffers(1, &quadVBO);
+        glGenVertexArrays(1, &quadVAO);
+
+        glBindVertexArray(quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
 
 
-        unsigned int amount = 100000;
-        glm::mat4* modelMatrices;
-        modelMatrices = new glm::mat4[amount];
-        srand(glfwGetTime());
-        float r = 50.0;
-        float offset = 2.5f;
 
-        for (unsigned int i = 0; i < amount; i++) {
+        unsigned int framebuffer;
+        glGenFramebuffers(1, &framebuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-            glm::mat4 model = glm::mat4(1.0f);
-            float angle = float(i) / (float)amount * 360.0f;
-            float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-            float x = sin(angle) * r + displacement;
-            displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-            float y = displacement * 0.4f;
-            displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-            float z = cos(angle) * r + displacement;
-            model = glm::translate(model, glm::vec3(x, y, z));
-
-            float scale = (rand() & 20) / 100.0f + 0.05f;
-            model = glm::scale(model, glm::vec3(scale));
-
-            float rotAngle = (rand() % 360);
-            model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
-
-            modelMatrices[i] = model;
-        }
-
-        unsigned int buffer;
-        glGenBuffers(1, &buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer);
-        glBufferData(GL_ARRAY_BUFFER, amount * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
-
-        for (unsigned int i = 0; i < asteroid.getMeshes().size(); i++) {
+        unsigned int multitex;
+        glGenTextures(1, &multitex);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multitex);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, multitex, 0);
 
 
-            unsigned int VAO = asteroid.getMeshes()[i].VAO;
-            glBindVertexArray(VAO);
+        unsigned int rbo;
+        glGenRenderbuffers(1, &rbo);
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
-            std::size_t vec4Size = sizeof(glm::vec4);
-            glEnableVertexAttribArray(3);
-            glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)0);
-            glEnableVertexAttribArray(4);
-            glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(1 * sizeof(glm::vec4)));
-            glEnableVertexAttribArray(5);
-            glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(2 * sizeof(glm::vec4)));
-            glEnableVertexAttribArray(6);
-            glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(3 * sizeof(glm::vec4)));
+      
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-            
-            glVertexAttribDivisor(3, 1);
-            glVertexAttribDivisor(4, 1);
-            glVertexAttribDivisor(5, 1);
-            glVertexAttribDivisor(6, 1);
-            glBindVertexArray(0);
+        //POST PROCESSING BUFFER
+        unsigned int postframe;
+        glGenFramebuffers(1, &postframe);
+        glBindFramebuffer(GL_FRAMEBUFFER, postframe);
 
+        unsigned int screenTexture;
+        glGenTextures(1, &screenTexture);
+        glBindTexture(GL_TEXTURE_2D, screenTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTexture, 0);
 
+      
+        quad.use();
+        quad.setInt("screen", 0);
 
-        }
-
-        
-   
-         
+  
          glEnable(GL_DEPTH_TEST);
-    
+       //  glEnable(GL_MULTISAMPLE);
+
     while (!glfwWindowShouldClose(window))
     {
 
@@ -174,38 +213,40 @@ float quadVertices[] = {
         lastFrame = currentFrame;
    
         processInput(window);
-  
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+
    
-        planetShader.use();
-        glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = cameroni.GetViewMatrix();
-        glm::mat4 projection = vertical_fov_project(45.0f, aspect, 0.1, 1000.0f);
-        planetShader.setMat4("projection", projection);
-        planetShader.setMat4("view", view);     
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
-        planetShader.setMat4("model", model);
-        planet.Draw(planetShader);
+        cubeBoy.use();
+        glm::mat4 proj = vertical_fov_project(45.0f, aspect, 0.1, 100.0);
+        cubeBoy.setMat4("projection", proj);
+        cubeBoy.setMat4("view", cameroni.GetViewMatrix());
+        cubeBoy.setMat4("model", glm::mat4(1.0f));
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        steroidShader.use();
-        steroidShader.setInt("texture_diffuse1", 0);
-        steroidShader.setMat4("projection", projection);
-        steroidShader.setMat4("view", view);
-    //    steroidShader.setFloat("r", r);
-    //    steroidShader.setFloat("time", glfwGetTime());
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postframe);
+        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
+
+        quad.use();
+        glBindVertexArray(quadVAO);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, asteroid.getTextures()[0].id);
-
-        for (unsigned int i = 0; i < asteroid.getMeshes().size(); i++) {
-            glBindVertexArray(asteroid.getMeshes()[i].VAO);
-            glDrawElementsInstanced(
-                GL_TRIANGLES, asteroid.getMeshes()[i].indices.size(), GL_UNSIGNED_INT, 0, amount
-            );
-        }
-       
+        glBindTexture(GL_TEXTURE_2D, screenTexture);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
 
@@ -293,6 +334,7 @@ void processInput(GLFWwindow* window)
      if(glfwGetKey(window, GLFW_KEY_D)== GLFW_PRESS){
         cameroni.ProcessKeyboard(RIGHT, deltaTime);
     }
+
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos){
