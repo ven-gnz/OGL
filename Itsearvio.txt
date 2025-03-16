@@ -1,0 +1,34 @@
+Itsearvio kurssista reaaliaikainen renderöinti
+
+
+1. Ajankäytöstä ehdotan itselleni arvosanaa 4 siitä yksinkertaisesta syystä, että noin 117 tuntia olen onnistuneesti budjetoinut oman grafiikkamatkani edistämiseen tässä kohtaa.
+
+2. Työskentelytavasta ehdotan itselleni arvosanaa 5. Vain tehokkaat tunnit on kirjattu. Kurssin mittaan on pitänyt ottaa kiinni pohjatiedoissa, ja ehkä hiukan haettu vauhtia C++ perusteista, gitistä, editoreista, build ja compile virheistä. Tekeminen ollut hyvää. Olen kiinnittänyt erityistä huomiota siihen että luen kappaleiden katkelmat monia kertoja kun tarpeen, ja teen huolellisesti kaikki ehdotetut tehtävät, etsin tietoa monista lähteistä enkä kopioi ensimmäistä stack overflow vastausta vaan pohdin miksi en osannut tuota tehdä.
+
+3. Vaatimusten toteutumisesta ehdotan itselleni arvosanaksi 5. Kaikki tehtävät on tapeltu läpi, mihin olen järkevästi ehtinyt. Olen kehittynyt debuggauksessa, virheiden etsimisessä ja niiden karkeassa jaoettelussa. En tuota täysimääräisen ammattimaista C++ koodia, mutta olen opetellut lisää kielen saloja. 
+
+4. Toteutuksen laadusta esitän itselleni arvosanaa 4. Olen oppinut paljon lisää C++ ympäristöstä, kieliekosysteemistä, ja siirtynyt kurssin myötä hakemaan ammattimaisempaa otetta kohti ohjelmointia. Vielä en päässyt mielestäni hyvän koodin kynnyksen yli, pääsin sinne vain paikoin ja lisäksi olen siinä mielestäni joitakin kanssaopiskelijoita jäljessä. Tunnistan ja tiedostan koodiin jääneeni jonkin verran purkkaa, mutta päämäärätietoisesti omaa osaamista kehitytty.
+
+5. Oppimisen toteutumisesta ehdotan itselleni arvosanaa 4. Olen harpannut tietämyksessäni, oppinut lisää ja syvemmin, sekä rutinoitunut TIEA311 ja grafiikan perusteissa muutenkin. OpenGL dokumentaatiota ja foorumia on lueskeltu. Ymmärrän grafiikkaliukuhihnan karkeasti, grafiikkarajapinnan roolin, varjostimet. Osaan toteuttaa tavanomaisempia valaistusilmiöitä käyttäen useimpia kurssimateriaaliin edistyneitä renderöintitekniikoita. Olen saavuttanut jonkinlaisen käsityksen aiheen liittyvästä tutkimuksesta, ja osannut liittää sen osaksi kurssin kontekstia. Alan hahmottamaan tarkemmin grafiikan tutkimuskysymyksiä ja nykyisiä tutkimuksen painopisteitä, minkälaisia kompromisseja on löydettävissä.
+
+Arvosanaan viisi mielestäni tässä olisi vaadittu tuo advanced lighting kappale tai ainakin sen aloitus, ja sen lisäksi se, että ylipäätään aikaa meni paljon esitietojen ja oppirahojen maksamiseen. Koen, että paremmalla ohjelmointirutiinilla C++ kielestä, git osaamisesta ja editorin tehokäytöstä olisi päässyt tällä aikabudjetilla pidemmälle.
+
+6. Oppimisen laatu selvä 5 mielestäni. Olen kehittynyt oppijana. Materiaalissa lähes kaikki oli uutta, jos ei teorian tasolla niin käytännön. Paljon teoriaa myös oli uutta, ja esimerkiksi tekstuurejakaan en kunnolla vielä TIEA311 kurssilla oppinut. Kaikki koodit on itse kirjoiteltu. Kun tulosteet ja renderöidyt tuotteet eivät näytä samalta, jokainen kivi on käännetty ympäri ja pohdittu mitä se tekee. Kun pohjakoodi mallivastauksia on verrattu, on palattu useasti tutoriaalikappaleeseen ja yritetty ymmärtää miksen ymmärtänyt jotain. Virheitä on tullut toistuvasti väsymyksestä johtuen, ja niistä on opeteltu toipumaan. Windows ympäristö, ammattimaisemmat työkalut, kurssilta vaadittujen työkalujen käyttö useassa ympäristössä. 
+
+7.1. Kurssilla helpointa oli innostua opiskeltavasta asiasta. Kurssilla oli paljon uutta asiaa, ja jo varhaisessa vaiheessa syntyi vahva kiinnostus koko ongelmakenttään. Helpointa oli lähteä myös liikkelle tsemppiringin kanssa.
+
+Varsinaisesti substanssiasioista helpointa oli ehkä transformaatiot, sillä niitä oli juuri syksyllä tullut pyöriteltyä.
+
+7.2. Vaikeinta oli löytää sopivasti aikaa ja sopivia käytännön harjoitteita. Aluksi tein niitä enemmänkin, mutta kun tutoriaalissa juostaan kappaleesta toiseen ja lähes kaikki viime kappaleen koodi on tipotiessään oli hankala löytää merkittäviä muutoksia yrittää muuttaa koodia.
+
+7.3. Hyödyllisin asia minkä kurssilla opin : grafiikkaliukuhihnan toiminta ja sen päälle rakentuva reaaliaikaisen renderöinnin skeema. Tutkimus, traditio, mitä ongelmia siihen liittyy ja miten niitä ratkotaan.
+
+7.4. Seuraavaksi tulossa kesän assemblyt, ja nyt kun on olemassa nuo inigo quilezin demopohjat, niilläpä sitten tehdään vaikka 4k demo johon opettelen jonkin noista kurssiin mahtumatta jääneistä kehittyneistä valaistusilmiöistä. Laajemminkin, seuraavaksi pohditaan rinnakkaisuutta, ja syksyllä viimeistään siirrytään tuonne fysikaaliset mallit kurssille. Onhan tässä, seuraan tällä hetkellä handmadehero videopäiväkirjaa, intoa on tehdä oma linalg kirjasto, ja peli missä renderöinti tehdään openGL koodilla. C++ myös otetaan paremmin hanskaan. Paljon suuntaa on loppuvuodelle, mutta ajatuksena on hidastaa tahtia syksyllä jotta on aikaa harrastaa.
+
+7.5. Haluaisin oppia järjestämään ja jäsentämään tutoriaalin ja kurssilla tuottamaani koodia niin, että voisin tehdä siitä jonkinlaisen render engine paketin. Lisäksi, että niitä demoja voi alkaa tahkoamaan. Tietokonegrafiikan parissa yhdistyy monet asiat joita haluan tulevalta uraltani ja asiat joita haluan vielä oppia.
+
+7.6. Tämä onkin hankalampi kysymys. LinAlg kirjaston olisi voinut jo tehdä TIEA311 opeilla, mutta enpä ole tehnyt. Assembly demot on varmaan se seuraava pakollinen deadline. Nähtäväksi jää mitkä kaikki asiat jäävät tarjottimelle, mutta kts seuraava kohta.
+
+7.7. Yritän löydää paremman tasapainon siihen, että maisterissa on enemmän aikaa soveltaa ja syventää kurssien ja edellisten kurssien asioita. Kandissa on paljon sillisalaattia ja välillä liikaa kursseja hamstrattua. Pitäisi opetella keskittymään olennaiseen, ja siihen ettei haali itselleen liikaa ohjelmaa päivään ja opetella sanomaan ei, mutta myös opetella sanomaan kyllä niille perusasioille jotka auttaisivat paikkaamaan aukkoja ja saamaan enemmän irti haastavammista ja hienovaraisemmista tekniikoista ja algoritmeista.
+
+Kaikenkaikkiaan ehdotan itselleni tästä kurssista arvosanaa 4. Aritmeettinen keskiarvo itsearviosta on 4,5. Kyllä saisin tämän perusteltua myös itselleni vitoseksi helposti, mutta itselläni jäi niin pahasti hampaankoloon tuo yhden luvun kokonaan puttuminen, ajankäytöstä puuttuisi parikymmentä tuntia. Sekä jos olisi aktivoitunut aiemmassa kohtaa kurssia siihen miten paljon perusjuttuja joutuu vielä opettelemaan, olisin saanut kurssista sen vitosen verran irti. Kaiken kaikkiaan tuntuu että kurssista olisi helposti saanut vielä enemmän irti myös jos olisi valmistautunut paremmin, olisi haalinut vähemmän ohjelmaa - toki työt ennen kaikkea.

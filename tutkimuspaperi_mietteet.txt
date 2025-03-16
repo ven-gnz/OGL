@@ -1,0 +1,29 @@
+
+
+Ihmismäisten hiusten RR hiuskolmioverkoilla
+
+
+Nauhoihin perustuvien hiusmaisten muotojen renderöinti on huomattavan vaativaa (ihmisellä 100 000 hiusta).
+Sillä on siis suuri laskennallinen vaativuus, mutta siihen liittyy myös paljon datan liikettä ja siihen liittyvä muistinkäsittely muodostuu helposti pullonkaulaksi. Lukemani tutkimus etsii tähän ratkaisua siirtämällä huomattavan osan kärkipistedataan liittyvästä laskennasta monikulmiovarjostimia vastaavalle nykyaikaisemmalle tekniikalle, kolmioverkkovarjostimille(mesh shader).
+
+Aiemmin vallalla ollut tekniikka LHS(linear hair skinning) perustuu ohjehiuksiin. Ohjehiuksien perusteella voidaan synnyttää hiusverkon muita hiuksia interpoloimalla eri arvoja ohjehiuksista, mikä helpottaa laskennallista vaativuutta. Näin saatujen interpoloitujen hiuksien tallentaminen muistiin on kuitenkin hidasta ja siihen liittyvä muistioperaatiot muodostuvat pullonkaulaksi.
+
+Tutkimuksessa Real-Time Hair Rendering with Hair Meshes, tutkimusryhmä jatkaa aiempien tutkimusten jatkumoa, missä diskretoidaan päänahka kolmioiksi ja nelikulmioiksi. Tutkimuksessa ajatus on viety pidemmälle, mallintamalla hiuskolmioverkkoa kallosta ulospäin työntyvänä monikerroksisena geometrisena muotona joka levenee kallosta ulospäin tultaessa.
+
+Esitellyssä metodissa hiuskolmioverkon kulmioiden kärkipisteet pyritään tallentamaan kolmiulotteiseen tekstuuriin. Tällöin voidaan hyödyntää laitteistokiihdytystä muodostamaan merkittävä osa hiusnauhojen kärkipistedatasta. Tutkimuksessa esitetyssä kuvassa mielenkiinnon kohteena on kolmioiden ja nelikulmioiden kärkipisteet. Kiinnostuksen kohteena oli käyrä joka muodostui kerrosten välille.
+
+Yksittäinen kerrosten välinen käyrä samaistettiin Catmull-Rom parametrisoiduksi käyräksi, eli splineksi. Ne muunnettiin Bezier käyriksi. Näin saadut Bezier käyrien kärkipisteet aseteltiin omiksi tasoikseen. Tällöin kärkipisteillä voitiin renderöidä nipullinen hiuksia trilineaarisesti interpoloimalla. Lopputuloksena suurimman osan kärkipisteisiin liittyvästä laskennasta hoitaa näytönohjaimen tekstuurifiltteröintiyksikkö.
+
+Huomattavaa siis on, että hiukset generoidaan joka kuvaan uudestaan. He käyttivät tähän mesh-shadereita, jotka ovat nykyaikainen monikulmiovarjostimiin verrattava tekniikka, ja laskentavarjostimia (compute shader). Tutkimuksessa havaittiin kolme vaihetta miten hiusten generointia rinnakkaistetaan. Hiusnipputaso(hair bundle), hiusnauhataso(strand level) sekä kärkipistetaso(vertex level). Hiusnipputaso, eli hiuskolmioverkot koostuvat useista hiusnipuista. 
+
+Tutkimuksessa kolmioverkkovarjostimet(mesh) suoritettiin nipputasoittain rinnakkain. Tämä tarkoittaa sitä, että yhdelle nipulle pyritään kohdentamaan S kpl säiettä(32 tai 64 arkkitehtuurista riippuen). Tällöin jokainen verkkovarjostimen säie laskiksi n kärkipistettä, missä hiusnauhan renderöinti vaati n*s + 1 kärkipistettä. Kärkipisteen laskentaan siis kuului hiusnauhan oletuskäyrän positio näytteistämällä se useita kertoja, ja näytteet lopulta yhdistettiin lineaarisella interpoloinnilla. Näin saatuja hiusnauhoja tyyliteltiin proseduraalisilla operaatioilla. Poikkeuksena tästä oli juurikärkipiste, joka selvitettiin vain yhdellä lukuoperaatiolla hiusverkkotekstuurista.
+
+
+Jokaista hiusnippua kohden kohdistettiin tehtävävarjostin(task shader). Tehtävävarjostin päätti nippuun generoitavien hiusten määrän. Näin ollen ottamalla käyttöön useita tehtävävarjostimia, saavutettiin nippukohtainen rinnakkaisuus.
+
+Yksittäisen hiusjuuren paikka nipussa generoitiin lopullisesti näytteistämällä blue noise - kohinafunktiota. Kohinafunktiolla luotiin esilasketut 2D näytesijainnit välillä [0,1], eli taas tekstuuriin. Näyte indeksoitiin käyttäen avaimena hiuksen nippukohtaista indeksiä. Kohinafunktiota säätämällä saatiin luonnollinen lopputulos missä nippujen välillä tulokset eivät vaihdelleet liikaa toisistaan.
+
+
+Tutkimuksessa implementoitiin myös etäisyysperustainen detalji. Mitä kauempana malli oli, sen vähemmän hiusnauhoja renderöitiin, ja kärkipisteiden määrä väheni per hiusnauha.
+
+Tämän verran sain tutkimukseen tutustuttua ja sisäistettyä. Paperin lukemiseen oli varattu noin kuutisen tuntia, ja lopulliseen kirjanpitoon päätyi reilu kuusi.
