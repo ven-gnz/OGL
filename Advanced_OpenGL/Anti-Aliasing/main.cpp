@@ -25,6 +25,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 const float aspect = (float) SCR_WIDTH / (float) SCR_HEIGHT;
 float fov = 45.0f;
+bool isAA = true;
 
 float cubeVertices[] = {
     // positions       
@@ -160,11 +161,9 @@ float quadVertices[] = {   // vertex attributes for a quad that fills the entire
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
 
-
-
-        unsigned int framebuffer;
-        glGenFramebuffers(1, &framebuffer);
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        unsigned int AAframebuffer;
+        glGenFramebuffers(1, &AAframebuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, AAframebuffer);
 
         unsigned int multitex;
         glGenTextures(1, &multitex);
@@ -173,15 +172,31 @@ float quadVertices[] = {   // vertex attributes for a quad that fills the entire
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, multitex, 0);
 
-
-        unsigned int rbo;
-        glGenRenderbuffers(1, &rbo);
-        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        unsigned int multiRBO;
+        glGenRenderbuffers(1, &multiRBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, multiRBO);
         glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, multiRBO);
 
-      
+        unsigned int aliasedFBO;
+        glGenFramebuffers(1, &aliasedFBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, aliasedFBO);
+
+        unsigned int simpleTex;
+        glGenTextures(1, &simpleTex);
+        glBindTexture(GL_TEXTURE_2D, simpleTex);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB,  GL_UNSIGNED_BYTE, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, simpleTex, 0);
+
+        unsigned int singleSampleRBO;
+        glGenRenderbuffers(1, &singleSampleRBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, singleSampleRBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, singleSampleRBO);
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         //POST PROCESSING BUFFER
@@ -201,7 +216,6 @@ float quadVertices[] = {   // vertex attributes for a quad that fills the entire
         quad.use();
         quad.setInt("screen", 0);
 
-  
          glEnable(GL_DEPTH_TEST);
        //  glEnable(GL_MULTISAMPLE);
 
@@ -217,13 +231,17 @@ float quadVertices[] = {   // vertex attributes for a quad that fills the entire
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        if (isAA) {
+            glBindFramebuffer(GL_FRAMEBUFFER, AAframebuffer);
+        }
+        else {
+            glBindFramebuffer(GL_FRAMEBUFFER, aliasedFBO);
+        }
 
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
 
-   
         cubeBoy.use();
         glm::mat4 proj = vertical_fov_project(45.0f, aspect, 0.1, 100.0);
         cubeBoy.setMat4("projection", proj);
@@ -232,21 +250,27 @@ float quadVertices[] = {   // vertex attributes for a quad that fills the entire
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postframe);
-        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        if (isAA) {
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, AAframebuffer);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postframe);
+            glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        }
+        else {
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, aliasedFBO);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postframe);
+            glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
-
         quad.use();
         glBindVertexArray(quadVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, screenTexture);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        
+     
         glfwSwapBuffers(window);
         glfwPollEvents();
 
@@ -334,6 +358,18 @@ void processInput(GLFWwindow* window)
      if(glfwGetKey(window, GLFW_KEY_D)== GLFW_PRESS){
         cameroni.ProcessKeyboard(RIGHT, deltaTime);
     }
+
+     static bool gDown = false;
+
+     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
+         if (!gDown) {
+             isAA = !isAA;
+         }
+         gDown = true;
+     }
+     else {
+         gDown = false;
+     }
 
 }
 
