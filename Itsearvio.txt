@@ -1,34 +1,90 @@
-Itsearvio kurssista reaaliaikainen renderöinti
+
+SART - smart ar tool for aircraft production,  uses tablet with a camera. Early detection of non conformities.
+Reduces inspection time from 15 -> 3 days. Main use case is the inspection of installed parts
+Uses tablet and qr codes
+
+Industrial projects 1:
+
+MARIN - mobile augmented reality tool for marine industry
+visualize plans during construction - easily seen at one glance, easier to interpret
+no need to carry printed plans
+Efficient inspection and documentation
+improved efficienct, reduced construction error as well as time
+Uses tablet
+virtual notes superceding the chalk markings - not painted over, provide more accesibility
+documentation tool : hole request offers needed flexibility to parallel running build & plan processes
+while helping stay informed about structural integrity
+inspections on planning phase : conforming to code
+inspections during operational life : wear and tear
 
 
-1. Ajankäytöstä ehdotan itselleni arvosanaa 4 siitä yksinkertaisesta syystä, että noin 117 tuntia olen onnistuneesti budjetoinut oman grafiikkamatkani edistämiseen tässä kohtaa.
+MARIN2 - Mobile mixed reality applications for professional use
+Extended focus to building construction & other industries
 
-2. Työskentelytavasta ehdotan itselleni arvosanaa 5. Vain tehokkaat tunnit on kirjattu. Kurssin mittaan on pitänyt ottaa kiinni pohjatiedoissa, ja ehkä hiukan haettu vauhtia C++ perusteista, gitistä, editoreista, build ja compile virheistä. Tekeminen ollut hyvää. Olen kiinnittänyt erityistä huomiota siihen että luen kappaleiden katkelmat monia kertoja kun tarpeen, ja teen huolellisesti kaikki ehdotetut tehtävät, etsin tietoa monista lähteistä enkä kopioi ensimmäistä stack overflow vastausta vaan pohdin miksi en osannut tuota tehdä.
 
-3. Vaatimusten toteutumisesta ehdotan itselleni arvosanaksi 5. Kaikki tehtävät on tapeltu läpi, mihin olen järkevästi ehtinyt. Olen kehittynyt debuggauksessa, virheiden etsimisessä ja niiden karkeassa jaoettelussa. En tuota täysimääräisen ammattimaista C++ koodia, mutta olen opetellut lisää kielen saloja. 
 
-4. Toteutuksen laadusta esitän itselleni arvosanaa 4. Olen oppinut paljon lisää C++ ympäristöstä, kieliekosysteemistä, ja siirtynyt kurssin myötä hakemaan ammattimaisempaa otetta kohti ohjelmointia. Vielä en päässyt mielestäni hyvän koodin kynnyksen yli, pääsin sinne vain paikoin ja lisäksi olen siinä mielestäni joitakin kanssaopiskelijoita jäljessä. Tunnistan ja tiedostan koodiin jääneeni jonkin verran purkkaa, mutta päämäärätietoisesti omaa osaamista kehitytty.
+Projects 2:
 
-5. Oppimisen toteutumisesta ehdotan itselleni arvosanaa 4. Olen harpannut tietämyksessäni, oppinut lisää ja syvemmin, sekä rutinoitunut TIEA311 ja grafiikan perusteissa muutenkin. OpenGL dokumentaatiota ja foorumia on lueskeltu. Ymmärrän grafiikkaliukuhihnan karkeasti, grafiikkarajapinnan roolin, varjostimet. Osaan toteuttaa tavanomaisempia valaistusilmiöitä käyttäen useimpia kurssimateriaaliin edistyneitä renderöintitekniikoita. Olen saavuttanut jonkinlaisen käsityksen aiheen liittyvästä tutkimuksesta, ja osannut liittää sen osaksi kurssin kontekstia. Alan hahmottamaan tarkemmin grafiikan tutkimuskysymyksiä ja nykyisiä tutkimuksen painopisteitä, minkälaisia kompromisseja on löydettävissä.
+MARIN2 - VR:
+SHIPVR VR visualization of a two layer store
+BRIDGEVR - visualization for construction for infrastructure - assests were donwloaded from server so CI/CD of metada, assets, etc can be observed in regards to latest versions
+Free movement in the area which could create nausea
+MARIN2 - AR:
+positioning models into the real world with panorama maps and standard tablets
+INDOOR AR : maintenance and service information from database for on site maintenance tasks
 
-Arvosanaan viisi mielestäni tässä olisi vaadittu tuo advanced lighting kappale tai ainakin sen aloitus, ja sen lisäksi se, että ylipäätään aikaa meni paljon esitietojen ja oppirahojen maksamiseen. Koen, että paremmalla ohjelmointirutiinilla C++ kielestä, git osaamisesta ja editorin tehokäytöstä olisi päässyt tällä aikabudjetilla pidemmälle.
+3D models are too large to be handled in mobile devices, divide et impera or simplify - preservation of geometry
 
-6. Oppimisen laatu selvä 5 mielestäni. Olen kehittynyt oppijana. Materiaalissa lähes kaikki oli uutta, jos ei teorian tasolla niin käytännön. Paljon teoriaa myös oli uutta, ja esimerkiksi tekstuurejakaan en kunnolla vielä TIEA311 kurssilla oppinut. Kaikki koodit on itse kirjoiteltu. Kun tulosteet ja renderöidyt tuotteet eivät näytä samalta, jokainen kivi on käännetty ympäri ja pohdittu mitä se tekee. Kun pohjakoodi mallivastauksia on verrattu, on palattu useasti tutoriaalikappaleeseen ja yritetty ymmärtää miksen ymmärtänyt jotain. Virheitä on tullut toistuvasti väsymyksestä johtuen, ja niistä on opeteltu toipumaan. Windows ympäristö, ammattimaisemmat työkalut, kurssilta vaadittujen työkalujen käyttö useassa ympäristössä. 
 
-7.1. Kurssilla helpointa oli innostua opiskeltavasta asiasta. Kurssilla oli paljon uutta asiaa, ja jo varhaisessa vaiheessa syntyi vahva kiinnostus koko ongelmakenttään. Helpointa oli lähteä myös liikkelle tsemppiringin kanssa.
+Projets 3: virtual sea trial video see trough
 
-Varsinaisesti substanssiasioista helpointa oli ehkä transformaatiot, sillä niitä oli juuri syksyllä tullut pyöriteltyä.
+VST XR - present VST partners with capabilites of modern pass through XR, and
+Oscilloscope tutorial, cabling tutorial
 
-7.2. Vaikeinta oli löytää sopivasti aikaa ja sopivia käytännön harjoitteita. Aluksi tein niitä enemmänkin, mutta kun tutoriaalissa juostaan kappaleesta toiseen ja lähes kaikki viime kappaleen koodi on tipotiessään oli hankala löytää merkittäviä muutoksia yrittää muuttaa koodia.
+Purely virtual vs 
 
-7.3. Hyödyllisin asia minkä kurssilla opin : grafiikkaliukuhihnan toiminta ja sen päälle rakentuva reaaliaikaisen renderöinnin skeema. Tutkimus, traditio, mitä ongelmia siihen liittyy ja miten niitä ratkotaan.
+eShare XR - Frontend
+selecting and editing in real time. Model data streamed through internet and in binary format, so a clever way to circumvent the model loading computational complexity ?
 
-7.4. Seuraavaksi tulossa kesän assemblyt, ja nyt kun on olemassa nuo inigo quilezin demopohjat, niilläpä sitten tehdään vaikka 4k demo johon opettelen jonkin noista kurssiin mahtumatta jääneistä kehittyneistä valaistusilmiöistä. Laajemminkin, seuraavaksi pohditaan rinnakkaisuutta, ja syksyllä viimeistään siirrytään tuonne fysikaaliset mallit kurssille. Onhan tässä, seuraan tällä hetkellä handmadehero videopäiväkirjaa, intoa on tehdä oma linalg kirjasto, ja peli missä renderöinti tehdään openGL koodilla. C++ myös otetaan paremmin hanskaan. Paljon suuntaa on loppuvuodelle, mutta ajatuksena on hidastaa tahtia syksyllä jotta on aikaa harrastaa.
+VR education and training:
+VR BUS training
+Necessary checks to a bus before starting
+Provides data, immedieate feedback, more immersive and haptile and tactical feedback on training
 
-7.5. Haluaisin oppia järjestämään ja jäsentämään tutoriaalin ja kurssilla tuottamaani koodia niin, että voisin tehdä siitä jonkinlaisen render engine paketin. Lisäksi, että niitä demoja voi alkaa tahkoamaan. Tietokonegrafiikan parissa yhdistyy monet asiat joita haluan tulevalta uraltani ja asiat joita haluan vielä oppia.
+VR connection schools:
+A platform for teachers and students creating the content themselves focused on studying and building bridges between separating geographical factors
 
-7.6. Tämä onkin hankalampi kysymys. LinAlg kirjaston olisi voinut jo tehdä TIEA311 opeilla, mutta enpä ole tehnyt. Assembly demot on varmaan se seuraava pakollinen deadline. Nähtäväksi jää mitkä kaikki asiat jäävät tarjottimelle, mutta kts seuraava kohta.
+VR design in reviews:
+Use of VR to hold meetings and generate interiors based on mockups for keeping shareholders in the loop of the whole process
 
-7.7. Yritän löydää paremman tasapainon siihen, että maisterissa on enemmän aikaa soveltaa ja syventää kurssien ja edellisten kurssien asioita. Kandissa on paljon sillisalaattia ja välillä liikaa kursseja hamstrattua. Pitäisi opetella keskittymään olennaiseen, ja siihen ettei haali itselleen liikaa ohjelmaa päivään ja opetella sanomaan ei, mutta myös opetella sanomaan kyllä niille perusasioille jotka auttaisivat paikkaamaan aukkoja ja saamaan enemmän irti haastavammista ja hienovaraisemmista tekniikoista ja algoritmeista.
 
-Kaikenkaikkiaan ehdotan itselleni tästä kurssista arvosanaa 4. Aritmeettinen keskiarvo itsearviosta on 4,5. Kyllä saisin tämän perusteltua myös itselleni vitoseksi helposti, mutta itselläni jäi niin pahasti hampaankoloon tuo yhden luvun kokonaan puttuminen, ajankäytöstä puuttuisi parikymmentä tuntia. Sekä jos olisi aktivoitunut aiemmassa kohtaa kurssia siihen miten paljon perusjuttuja joutuu vielä opettelemaan, olisin saanut kurssista sen vitosen verran irti. Kaiken kaikkiaan tuntuu että kurssista olisi helposti saanut vielä enemmän irti myös jos olisi valmistautunut paremmin, olisi haalinut vähemmän ohjelmaa - toki työt ennen kaikkea.
+Pick a couple of the example applications presented in the videos and compare their differences. How do e.g. the usage environments affect the technology solutions, how do the user experiences differ?
+
+
+In education, a big part of the business model of the application is providing a platform. In this platfor, the teachers and students sort of generate the content for themselves, and creating the content together is a key factor. It is the polar opposite of industry grade shipbuilding, where we need factual data and the question in there then becomes how to create accurate representations while being mindful of tecnical limitations.
+
+
+In MARIN for example, the device used is tablet so the app is clearly more based on reality hence it is an augmented reality app. On the videos, they demonstrated hole requesting for example with quite accurate estimations, where the application would inform on the possible structural integrity violations of the hole. Also in the videos it was mentioned that accurate modeling contains so much data that some clever solutions have to be used. So accuracy is given a prime.
+
+Whereas with the education platform, fun and immersion are given a prime. Having a 1 to 1 avatar is not going to make or break the experience. Also the content might be also given the benefit of the doubt as to for example historical or architectonic accuracies. Goal of the app is to learn and interact, and therefore giving users more leeway in showing their handprint in the program, regardless of how plausible it is, is a key value.
+
+
+What kind of technical requirements are there for equipment used in industrial conditions? What requirements are there from the user experience point of view? Compared to those apps made for e.g. cultural heritage or entertainment purposes, how do the requirements differ?
+
+The technical requirements play a bigger role. With cultural heritage application, no one will die if a character gets misplaced. But an error in a critical components eg boat load bearing structures can leads to loss of millions having to rebuild the whole thing, in the worst case. The accuracy goes hand in hand with the use case.
+
+Cultural heritage applications were made from historians and developers to laypeople, so some historical inaccuracies were ok. As discussed on previous weeks, some educated guesses were ok. But grade A industrial applications have maybe even mathematical error margins, epsilons, over how much inaccuracies can be present as well as what kind of cumulating error can be tolerated. No system is perfect, but if the app deviates too much from the allotted margins, it becames unusable.
+
+This naturally is a challenge with limited computational power or AR devices. This was solved in the videos by simplifying geometry, as well as delivering parts of the models via internet or some other remote access ad hoc. This gave the MARIN for example a good forum also for storing all the digital notes which in a physical world would be painted over for example.
+
+
+
+Compare content creation for industrial MR applications vs. culture-oriented and entertainment applications. What essential differences do you see? How do the needs for data connections and storage differ? What is causing the differences?
+
+Extending on the topics of the previous essay, the accuracy and use case going hand in hand is clearly a big thing. In an industrial context, the feedback loop and iterative nature might be more prevalent in the development process. Also the added accuracy poses new challenges with limited computational power of handhelds, and typically creates the need of forums for multiple users to share their design and building data for example.
+
+Briefly mentioned in one of the videos was continuous delivery of the most current version of the assets. This was handled by loading the most current version via cloud. This quite naturally creates a new problem of needing version controls and handling merging of different versions - is a sketch with an old model automatically fully compatible with a newer one? This also poses the concurrency issue - if someone is editing the same things in the plan, how are these handled? In software context we would call these merge conflicts.
+
+So the idea of simply loading the newest asset is not a silver bullet. It is a great addition. But this does require thinking the distribution as well - are multiple hot reloads supported? Streaming megabytes of data in real time to multiple devices is not a trivial task, and I argue that also the networking side can prove problematic on as real time as possible model swaps for example.
+
+The differences are caused by static vs dynamic use cases of the app. During cultural heritage app development, these kinds of problems are typically handled via robust project management. But the consumer producer problem is more prevalent in the more accuracy driven, latest version needing applications.
